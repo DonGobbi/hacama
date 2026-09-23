@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Environment secrets (keep .env.example)
+.env
+.env.local
+.env.*.local
+
+# Uploaded files (local storage)
+backend/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
