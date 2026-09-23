@@ -16,6 +16,10 @@ build/
 gcs-key.json
 **/gcs-key.json
 
+# Cloud Run deploy env (contains secrets)
+cloudrun-env.yaml
+**/cloudrun-env.yaml
+
 # Uploaded files (local storage)
 backend/uploads/
 

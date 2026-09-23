@@ -1,0 +1,6 @@
+# Cloud Run source-deploy build config (Google Cloud buildpacks).
+# NEXT_PUBLIC_* vars are inlined by `next build`, so they must be set
+# at build time here rather than as runtime env vars.
+[[build.env]]
+name = "NEXT_PUBLIC_API_URL"
+value = "https://hacama-api-370098605562.africa-south1.run.app/api"

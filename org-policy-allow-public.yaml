@@ -1,0 +1,5 @@
+name: projects/hacama-web/policies/iam.allowedPolicyMemberDomains
+spec:
+  inheritFromParent: false
+  rules:
+    - allowAll: true
