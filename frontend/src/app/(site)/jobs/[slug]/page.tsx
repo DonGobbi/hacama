@@ -38,7 +38,11 @@ export default async function JobDetailsPage({ params }: Props) {
           >
             <ArrowLeft className="size-4" /> All jobs
           </Link>
-          {job.department && <p className="section-tag mt-8">{job.department}</p>}
+          {job.department && (
+            <div className="mt-8">
+              <span className="section-tag">{job.department}</span>
+            </div>
+          )}
           <h1 className="mt-3 max-w-3xl text-3xl font-bold tracking-tight sm:text-5xl">{job.title}</h1>
           <div className="mt-6 flex flex-wrap gap-2.5">
             <span className="badge gap-1.5 border border-slate-200 bg-white px-3.5 py-1.5 text-sm text-slate-700 shadow-sm">

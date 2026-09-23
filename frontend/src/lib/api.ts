@@ -86,16 +86,16 @@ export async function safely<T>(promise: Promise<T>, fallback: T): Promise<T> {
 
 export const publicApi = {
   jobs: (params: { search?: string; employmentType?: string } = {}) =>
-    request<Job[]>(`/jobs${toQuery(params)}`, { next: { revalidate: 60 } }),
-  jobBySlug: (slug: string) => request<Job>(`/jobs/slug/${encodeURIComponent(slug)}`, { next: { revalidate: 60 } }),
+    request<Job[]>(`/jobs${toQuery(params)}`, { cache: 'no-store' }),
+  jobBySlug: (slug: string) => request<Job>(`/jobs/slug/${encodeURIComponent(slug)}`, { cache: 'no-store' }),
   photos: (params: { category?: string; featured?: boolean } = {}) =>
-    request<Photo[]>(`/photos${toQuery(params)}`, { next: { revalidate: 60 } }),
-  photoCategories: () => request<string[]>('/photos/categories', { next: { revalidate: 60 } }),
+    request<Photo[]>(`/photos${toQuery(params)}`, { cache: 'no-store' }),
+  photoCategories: () => request<string[]>('/photos/categories', { cache: 'no-store' }),
   apply: (form: FormData) => request<{ id: string; submitted: boolean }>('/applications', { method: 'POST', body: form }),
-  settings: () => request<SiteSettings>('/settings', { next: { revalidate: 60 } }),
-  testimonials: () => request<Testimonial[]>('/testimonials', { next: { revalidate: 60 } }),
-  partners: () => request<Partner[]>('/partners', { next: { revalidate: 60 } }),
-  projects: () => request<Project[]>('/projects', { next: { revalidate: 60 } }),
+  settings: () => request<SiteSettings>('/settings', { cache: 'no-store' }),
+  testimonials: () => request<Testimonial[]>('/testimonials', { cache: 'no-store' }),
+  partners: () => request<Partner[]>('/partners', { cache: 'no-store' }),
+  projects: () => request<Project[]>('/projects', { cache: 'no-store' }),
   submitEnquiry: (data: EnquiryInput) =>
     request<{ id?: string; submitted: boolean }>('/enquiries', { method: 'POST', body: data }),
   login: (email: string, password: string) =>
