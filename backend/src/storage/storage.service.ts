@@ -72,16 +72,28 @@ export class StorageService {
       metadata: { cacheControl: 'public, max-age=31536000' },
     });
 
+    // Private bucket: hand out a stable backend URL that redirects to a
+    // short-lived signed URL on each request (see MediaController).
     const url = this.publicBucket
       ? `https://storage.googleapis.com/${this.bucketName}/${encodeURI(storagePath)}`
-      : (
-          await blob.getSignedUrl({
-            action: 'read',
-            expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-          })
-        )[0];
+      : `${this.localBaseUrl}/api/media/${encodeURI(storagePath)}`;
 
     return { url, storagePath, contentType: file.mimetype, size: file.size };
+  }
+
+  /** Resolve a stored object to a readable URL (signed when the bucket is private). */
+  async getReadUrl(storagePath: string): Promise<string> {
+    if (!this.useGcs) {
+      return `${this.localBaseUrl}/uploads/${encodeURI(storagePath)}`;
+    }
+    if (this.publicBucket) {
+      return `https://storage.googleapis.com/${this.bucketName}/${encodeURI(storagePath)}`;
+    }
+    const [url] = await this.bucket.file(storagePath).getSignedUrl({
+      action: 'read',
+      expires: Date.now() + 1000 * 60 * 15,
+    });
+    return url;
   }
 
   async remove(storagePath: string): Promise<void> {

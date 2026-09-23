@@ -12,6 +12,10 @@ build/
 .env.local
 .env.*.local
 
+# GCP service account keys
+gcs-key.json
+**/gcs-key.json
+
 # Uploaded files (local storage)
 backend/uploads/
 
