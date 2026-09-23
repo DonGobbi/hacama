@@ -29,7 +29,9 @@ export function ApplyForm({ jobId }: { jobId: string }) {
   if (status === 'done') {
     return (
       <div className="card flex flex-col items-center gap-3 p-8 text-center">
-        <CheckCircle2 className="size-10 text-emerald-600" />
+        <span className="flex size-14 items-center justify-center rounded-full bg-emerald-50">
+          <CheckCircle2 className="size-8 text-emerald-600" />
+        </span>
         <h3 className="text-lg font-semibold text-ink-950">Application submitted</h3>
         <p className="text-sm text-slate-600">Thank you. Our team will review your application and get back to you.</p>
       </div>
@@ -37,8 +39,12 @@ export function ApplyForm({ jobId }: { jobId: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="card space-y-4 p-6">
-      <h3 className="text-lg font-semibold text-ink-950">Apply for this role</h3>
+    <form onSubmit={onSubmit} className="card space-y-4 overflow-hidden p-0">
+      <div className="border-b border-slate-200 bg-stone-50 px-6 py-5">
+        <h3 className="text-lg font-semibold text-ink-950">Apply for this role</h3>
+        <p className="mt-0.5 text-sm text-slate-500">Fill in your details and attach your CV.</p>
+      </div>
+      <div className="space-y-4 px-6 pb-6">
       <label className="block">
         <span className="label">Full name</span>
         <input className="input" name="fullName" required minLength={2} />
@@ -69,6 +75,7 @@ export function ApplyForm({ jobId }: { jobId: string }) {
         {status === 'sending' && <Loader2 className="size-4 animate-spin" />}
         Submit application
       </button>
+      </div>
     </form>
   );
 }

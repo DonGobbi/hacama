@@ -1,4 +1,4 @@
-import { ArrowLeft, Briefcase, CalendarClock, MapPin } from 'lucide-react';
+import { ArrowLeft, Banknote, Briefcase, CalendarClock, CheckCircle2, MapPin } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -29,23 +29,31 @@ export default async function JobDetailsPage({ params }: Props) {
 
   return (
     <>
-      <section className="border-b border-slate-200 bg-stone-50 text-ink-950">
-        <div className="container-page py-14">
-          <Link href="/jobs" className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-ink-950">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-stone-50 text-ink-950">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,75,56,0.08),transparent_35%)]" />
+        <div className="container-page relative py-14 sm:py-16">
+          <Link
+            href="/jobs"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-3.5 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-400 hover:text-ink-950"
+          >
             <ArrowLeft className="size-4" /> All jobs
           </Link>
-          {job.department && <p className="section-tag mt-6">{job.department}</p>}
-          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{job.title}</h1>
-          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600">
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="size-4" /> {job.location}
+          {job.department && <p className="section-tag mt-8">{job.department}</p>}
+          <h1 className="mt-3 max-w-3xl text-3xl font-bold tracking-tight sm:text-5xl">{job.title}</h1>
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            <span className="badge gap-1.5 border border-slate-200 bg-white px-3.5 py-1.5 text-sm text-slate-700 shadow-sm">
+              <MapPin className="size-4 text-brand-600" /> {job.location}
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Briefcase className="size-4" /> {titleCase(job.employmentType)}
-              {job.salary && ` · ${job.salary}`}
+            <span className="badge gap-1.5 border border-slate-200 bg-white px-3.5 py-1.5 text-sm text-slate-700 shadow-sm">
+              <Briefcase className="size-4 text-brand-600" /> {titleCase(job.employmentType)}
             </span>
+            {job.salary && (
+              <span className="badge gap-1.5 border border-slate-200 bg-white px-3.5 py-1.5 text-sm text-slate-700 shadow-sm">
+                <Banknote className="size-4 text-brand-600" /> {job.salary}
+              </span>
+            )}
             {job.deadline && (
-              <span className="inline-flex items-center gap-1.5">
+              <span className="badge gap-1.5 border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-sm font-medium text-brand-700 shadow-sm">
                 <CalendarClock className="size-4" /> Apply by {formatDate(job.deadline)}
               </span>
             )}
@@ -55,16 +63,23 @@ export default async function JobDetailsPage({ params }: Props) {
 
       <section className="py-12">
         <div className="container-page grid gap-10 lg:grid-cols-[1fr_380px]">
-          <article className="space-y-8">
-            <p className="text-lg text-slate-700">{job.summary}</p>
-            <div className="whitespace-pre-line text-slate-600">{job.description}</div>
+          <article className="space-y-10">
+            <p className="border-l-4 border-brand-500 pl-5 text-lg leading-relaxed font-medium text-ink-900">
+              {job.summary}
+            </p>
+            <div className="whitespace-pre-line leading-relaxed text-slate-600">{job.description}</div>
 
             {job.responsibilities.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold text-ink-950">Responsibilities</h2>
-                <ul className="mt-3 list-disc space-y-1.5 pl-5 text-slate-600">
+                <h2 className="flex items-center gap-2.5 text-xl font-semibold text-ink-950">
+                  <span className="h-6 w-1 rounded-full bg-brand-500" /> Responsibilities
+                </h2>
+                <ul className="mt-4 space-y-2.5">
                   {job.responsibilities.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li key={item} className="flex items-start gap-2.5 text-slate-600">
+                      <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-brand-600" />
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -72,10 +87,15 @@ export default async function JobDetailsPage({ params }: Props) {
 
             {job.requirements.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold text-ink-950">Requirements</h2>
-                <ul className="mt-3 list-disc space-y-1.5 pl-5 text-slate-600">
+                <h2 className="flex items-center gap-2.5 text-xl font-semibold text-ink-950">
+                  <span className="h-6 w-1 rounded-full bg-brand-500" /> Requirements
+                </h2>
+                <ul className="mt-4 space-y-2.5">
                   {job.requirements.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li key={item} className="flex items-start gap-2.5 text-slate-600">
+                      <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-brand-600" />
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
