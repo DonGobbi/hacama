@@ -412,9 +412,14 @@ export default async function HomePage() {
       {testimonials.length > 0 && (
         <section id="testimonials" className="scroll-mt-20 py-20">
           <div className="container-page">
-            <div className="max-w-2xl">
-              <span className="section-tag">Testimonials</span>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">What our customers say.</h2>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div className="max-w-2xl">
+                <span className="section-tag">Testimonials</span>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">What our customers say.</h2>
+              </div>
+              <Link href="/testimonials" className="btn btn-outline">
+                All testimonials <ArrowRight className="size-4" />
+              </Link>
             </div>
             <TestimonialCarousel testimonials={testimonials} />
           </div>

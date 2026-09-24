@@ -19,6 +19,7 @@ function initials(name: string) {
 function Slide({ t, className, animate }: { t: Testimonial; className?: string; animate?: boolean }) {
   return (
     <figure
+      aria-hidden={!animate}
       className={clsx(
         'relative col-start-1 row-start-1 flex flex-col items-center px-6 py-12 text-center sm:px-16 sm:py-14',
         className,
@@ -41,7 +42,7 @@ function Slide({ t, className, animate }: { t: Testimonial; className?: string; 
       </span>
       <blockquote
         className={clsx(
-          'mt-7 max-w-3xl text-xl leading-relaxed font-medium text-balance text-ink-950 sm:text-2xl',
+          'mt-7 line-clamp-4 max-w-3xl text-xl leading-relaxed font-medium text-balance text-ink-950 sm:text-2xl',
           animate && 'animate-fade-up [animation-delay:120ms]',
         )}
       >
@@ -118,14 +119,32 @@ export function TestimonialCarousel({ testimonials }: { testimonials: Testimonia
         <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full bg-brand-100/60 blur-3xl" />
         <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-24 size-64 rounded-full bg-brand-50 blur-3xl" />
 
+        {/* All slides stay mounted in the same grid cell so the panel height
+            always equals the tallest quote — no layout shift on rotation. */}
         <div className="relative grid" aria-live="polite">
-          {leaving !== null && testimonials[leaving] && (
-            <Slide
-              t={testimonials[leaving]}
-              className={clsx('pointer-events-none', dir === 1 ? 'animate-slide-out-left' : 'animate-slide-out-right')}
-            />
-          )}
-          <Slide key={index} t={current} animate className={dir === 1 ? 'animate-slide-in-right' : 'animate-slide-in-left'} />
+          {testimonials.map((t, i) => {
+            const isCurrent = i === index;
+            const isLeaving = i === leaving;
+            return (
+              <Slide
+                key={t._id}
+                t={t}
+                animate={isCurrent}
+                className={clsx(
+                  !isCurrent && 'pointer-events-none',
+                  isCurrent
+                    ? dir === 1
+                      ? 'animate-slide-in-right'
+                      : 'animate-slide-in-left'
+                    : isLeaving
+                      ? dir === 1
+                        ? 'animate-slide-out-left'
+                        : 'animate-slide-out-right'
+                      : 'invisible',
+                )}
+              />
+            );
+          })}
         </div>
       </div>
 
