@@ -50,10 +50,18 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   const sidebar = (
     <div className="flex h-full flex-col border-r border-slate-200 bg-white px-4 py-6">
-      <div className="px-2">
+      <div className="flex items-center justify-between px-2">
         <Brand />
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label="Close menu"
+          className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden"
+        >
+          <X className="size-5" />
+        </button>
       </div>
-      <nav className="mt-8 flex-1 space-y-1" aria-label="Admin navigation">
+      <nav className="mt-6 flex-1 space-y-1 overflow-y-auto" aria-label="Admin navigation">
         {items.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
