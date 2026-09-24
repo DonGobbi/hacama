@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { Eye, EyeOff, Loader2, Pencil, Plus, Save, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
 import { adminApi } from '@/lib/api';
@@ -49,6 +50,7 @@ export function CollectionManager<T extends BaseItem>({
   detail,
   imageClassName = 'aspect-[16/10] w-full object-cover',
 }: Props<T>) {
+  const router = useRouter();
   const [items, setItems] = useState<T[] | null>(null);
   const [editing, setEditing] = useState<T | null>(null);
   const [saving, setSaving] = useState(false);
@@ -83,6 +85,7 @@ export function CollectionManager<T extends BaseItem>({
       upsert(saved);
       setEditing(null);
       formRef.current?.reset();
+      router.refresh(); // drop cached public pages so the change is visible immediately
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -95,6 +98,7 @@ export function CollectionManager<T extends BaseItem>({
     form.set('published', item.published ? 'false' : 'true');
     try {
       upsert(await adminApi.contentUpdate<T>(kind, item._id, form));
+      router.refresh();
     } catch (err) {
       setError((err as Error).message);
     }
@@ -106,6 +110,7 @@ export function CollectionManager<T extends BaseItem>({
       await adminApi.contentDelete(kind, item._id);
       setItems((prev) => prev?.filter((i) => i._id !== item._id) ?? null);
       if (editing?._id === item._id) setEditing(null);
+      router.refresh();
     } catch (err) {
       setError((err as Error).message);
     }
@@ -215,7 +220,7 @@ export function CollectionManager<T extends BaseItem>({
             ) : (
               <Plus className="size-4" />
             )}
-            {editing ? 'Save changes' : `Add ${singular}`}
+            {saving ? 'Saving…' : editing ? 'Save changes' : `Add ${singular}`}
           </button>
         </div>
       </form>
