@@ -10,10 +10,13 @@
     --color-brand-700: #8d3f2f;
     --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
     --animate-photo-in: photo-in 0.9s ease-out both;
-    --animate-slide-in-right: slide-in-right 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    --animate-slide-in-left: slide-in-left 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    --animate-slide-out-left: slide-out-left 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    --animate-slide-out-right: slide-out-right 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-slide-in-right: slide-in-right 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-slide-in-left: slide-in-left 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-slide-out-left: slide-out-left 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-slide-out-right: slide-out-right 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-fade-up: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-pop: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    --animate-progress: progress linear both;
     @keyframes photo-in {
         from {
             opacity: 0;
@@ -27,41 +30,69 @@
     @keyframes slide-in-right {
         from {
             opacity: 0;
-            transform: translateX(48px);
+            transform: translateX(64px) scale(0.97);
         }
         to {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
         }
     }
     @keyframes slide-in-left {
         from {
             opacity: 0;
-            transform: translateX(-48px);
+            transform: translateX(-64px) scale(0.97);
         }
         to {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
         }
     }
     @keyframes slide-out-left {
         from {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
         }
         to {
             opacity: 0;
-            transform: translateX(-48px);
+            transform: translateX(-64px) scale(0.97);
         }
     }
     @keyframes slide-out-right {
         from {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
         }
         to {
             opacity: 0;
-            transform: translateX(48px);
+            transform: translateX(64px) scale(0.97);
+        }
+    }
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes pop {
+        from {
+            opacity: 0;
+            transform: scale(0.4);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    @keyframes progress {
+        from {
+            transform: scaleX(0);
+        }
+        to {
+            transform: scaleX(1);
         }
     }
 }

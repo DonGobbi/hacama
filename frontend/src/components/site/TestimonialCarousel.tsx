@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Testimonial } from '@/lib/types';
 
 const ROTATE_MS = 6000;
-const SLIDE_MS = 700;
+const SLIDE_MS = 750;
 
 function initials(name: string) {
   return name
@@ -16,20 +16,42 @@ function initials(name: string) {
     .join('');
 }
 
-function Slide({ t, className }: { t: Testimonial; className?: string }) {
+function Slide({ t, className, animate }: { t: Testimonial; className?: string; animate?: boolean }) {
   return (
-    <figure className={clsx('col-start-1 row-start-1 flex flex-col items-center text-center', className)}>
-      <span className="grid size-12 place-items-center rounded-full bg-brand-50 text-brand-600">
+    <figure
+      className={clsx(
+        'relative col-start-1 row-start-1 flex flex-col items-center px-6 py-12 text-center sm:px-16 sm:py-14',
+        className,
+      )}
+    >
+      {/* oversized watermark quotes */}
+      <Quote
+        aria-hidden
+        className="pointer-events-none absolute top-5 left-5 size-14 -scale-x-100 text-brand-600/10 sm:size-20"
+      />
+      <Quote aria-hidden className="pointer-events-none absolute right-5 bottom-5 size-14 text-brand-600/10 sm:size-20" />
+
+      <span
+        className={clsx(
+          'grid size-12 place-items-center rounded-full bg-brand-600 text-white shadow-lg shadow-brand-600/30',
+          animate && 'animate-pop',
+        )}
+      >
         <Quote className="size-5" />
       </span>
-      <blockquote className="mt-6 max-w-3xl text-xl leading-relaxed font-medium text-balance text-ink-950 sm:text-2xl">
+      <blockquote
+        className={clsx(
+          'mt-7 max-w-3xl text-xl leading-relaxed font-medium text-balance text-ink-950 sm:text-2xl',
+          animate && 'animate-fade-up [animation-delay:120ms]',
+        )}
+      >
         &ldquo;{t.quote}&rdquo;
       </blockquote>
-      <figcaption className="mt-8 flex items-center gap-3">
+      <figcaption className={clsx('mt-8 flex items-center gap-3', animate && 'animate-fade-up [animation-delay:240ms]')}>
         {t.imageUrl ? (
-          <img src={t.imageUrl} alt="" className="size-12 rounded-full object-cover" />
+          <img src={t.imageUrl} alt="" className="size-12 rounded-full object-cover ring-2 ring-white" />
         ) : (
-          <span className="grid size-12 place-items-center rounded-full bg-brand-50 text-sm font-semibold text-brand-600">
+          <span className="grid size-12 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 ring-2 ring-white">
             {initials(t.name)}
           </span>
         )}
@@ -91,14 +113,20 @@ export function TestimonialCarousel({ testimonials }: { testimonials: Testimonia
 
   return (
     <div className="mt-10" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="grid" aria-live="polite">
-        {leaving !== null && testimonials[leaving] && (
-          <Slide
-            t={testimonials[leaving]}
-            className={clsx('pointer-events-none', dir === 1 ? 'animate-slide-out-left' : 'animate-slide-out-right')}
-          />
-        )}
-        <Slide key={index} t={current} className={dir === 1 ? 'animate-slide-in-right' : 'animate-slide-in-left'} />
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-brand-50/40 to-slate-50 shadow-sm">
+        {/* soft decorative glows */}
+        <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full bg-brand-100/60 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-24 size-64 rounded-full bg-brand-50 blur-3xl" />
+
+        <div className="relative grid" aria-live="polite">
+          {leaving !== null && testimonials[leaving] && (
+            <Slide
+              t={testimonials[leaving]}
+              className={clsx('pointer-events-none', dir === 1 ? 'animate-slide-out-left' : 'animate-slide-out-right')}
+            />
+          )}
+          <Slide key={index} t={current} animate className={dir === 1 ? 'animate-slide-in-right' : 'animate-slide-in-left'} />
+        </div>
       </div>
 
       {testimonials.length > 1 && (
@@ -119,10 +147,20 @@ export function TestimonialCarousel({ testimonials }: { testimonials: Testimonia
                 onClick={() => go(i, i > index ? 1 : -1)}
                 aria-label={`Show testimonial ${i + 1}`}
                 className={clsx(
-                  'h-2 rounded-full transition-all duration-300',
-                  i === index ? 'w-6 bg-brand-600' : 'w-2 bg-slate-300 hover:bg-slate-400',
+                  'relative h-2 overflow-hidden rounded-full transition-all duration-300',
+                  i === index ? 'w-10 bg-brand-100' : 'w-2 bg-slate-300 hover:bg-slate-400',
                 )}
-              />
+              >
+                {i === index && (
+                  <span
+                    className={clsx(
+                      'animate-progress absolute inset-0 origin-left rounded-full bg-brand-600',
+                      paused && '[animation-play-state:paused]',
+                    )}
+                    style={{ animationDuration: `${ROTATE_MS}ms` }}
+                  />
+                )}
+              </button>
             ))}
           </div>
           <button
