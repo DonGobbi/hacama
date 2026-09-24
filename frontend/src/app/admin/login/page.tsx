@@ -1,6 +1,7 @@
 'use client';
 
 import { Loader2, LockKeyhole } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { Brand } from '@/components/site/Brand';
@@ -39,6 +40,11 @@ function LoginForm() {
         <span className="label">Password</span>
         <input className="input" type="password" name="password" autoComplete="current-password" required />
       </label>
+      <div className="text-right">
+        <Link href="/admin/forgot-password" className="text-sm font-medium text-brand-600 hover:text-brand-700">
+          Forgot password?
+        </Link>
+      </div>
       {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
       <button type="submit" className="btn btn-primary w-full" disabled={loading}>
         {loading ? <Loader2 className="size-4 animate-spin" /> : <LockKeyhole className="size-4" />}

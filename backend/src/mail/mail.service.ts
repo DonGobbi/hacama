@@ -72,6 +72,29 @@ export class MailService {
     );
   }
 
+  /** Send a password-reset link directly to a user. Never throws. */
+  sendPasswordReset(to: string, name: string, resetUrl: string): void {
+    if (!this.resend) return;
+    this.resend.emails
+      .send({
+        from: this.from,
+        to,
+        subject: 'Reset your Hacama admin password',
+        html: this.wrap(
+          'Reset your password',
+          `
+          <tr><td style="${this.tdLabel}">Hi</td><td style="${this.tdValue}">${this.esc(name)}</td></tr>
+          <tr><td style="${this.tdLabel}">Reset link</td><td style="${this.tdValue}"><a href="${this.esc(resetUrl)}">${this.esc(resetUrl)}</a></td></tr>
+          `,
+          'This link expires in 1 hour. If you did not request a reset, you can ignore this email.',
+        ),
+      })
+      .then(({ error }) => {
+        if (error) this.logger.error(`Resend rejected password reset for ${to}: ${error.message}`);
+      })
+      .catch((err: Error) => this.logger.error(`Failed to send password reset to ${to}: ${err.message}`));
+  }
+
   private readonly tdLabel =
     'padding:8px 12px;font-size:13px;color:#64748b;border-bottom:1px solid #f1f5f9;white-space:nowrap;vertical-align:top';
   private readonly tdValue = 'padding:8px 12px;font-size:13px;color:#1d1d22;border-bottom:1px solid #f1f5f9';

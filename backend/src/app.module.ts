@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ActivityModule } from './activity/activity.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { AuthModule } from './auth/auth.module';
 import { DemandsModule } from './demands/demands.module';
@@ -29,6 +30,7 @@ import { UsersModule } from './users/users.module';
     StorageModule,
     MailModule,
     UsersModule,
+    ActivityModule,
     AuthModule,
     JobsModule,
     NewsModule,

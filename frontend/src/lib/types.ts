@@ -59,8 +59,10 @@ export interface AdminUser {
   _id: string;
   name: string;
   email: string;
+  phone?: string;
   role: UserRole;
   active: boolean;
+  lastLoginAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -69,7 +71,20 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   role: UserRole;
+}
+
+export interface ActivityLog {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  action: string;
+  ip: string;
+  device: string;
+  location: string;
+  createdAt: string;
 }
 
 export interface LoginResponse {

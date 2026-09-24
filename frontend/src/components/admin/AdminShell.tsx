@@ -2,7 +2,9 @@
 
 import clsx from 'clsx';
 import {
+  Activity,
   Briefcase,
+  ChevronDown,
   ExternalLink,
   FileText,
   FolderKanban,
@@ -15,13 +17,14 @@ import {
   Newspaper,
   Quote,
   Settings,
+  UserCog,
   Users,
   Wheat,
   X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Brand } from '@/components/site/Brand';
 import { useAuth } from './AuthProvider';
 
@@ -37,11 +40,89 @@ const NAV = [
   { href: '/admin/testimonials', label: 'Testimonials', icon: Quote },
   { href: '/admin/partners', label: 'Partners', icon: Handshake },
   { href: '/admin/settings', label: 'Site settings', icon: Settings },
+  { href: '/admin/activity', label: 'Activity logs', icon: Activity },
   { href: '/admin/users', label: 'Users', icon: Users, superadminOnly: true },
 ];
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+function initials(name: string) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+}
+
+function AccountMenu() {
   const { user, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 transition hover:border-slate-300 hover:shadow-sm"
+      >
+        <span className="grid size-8 place-items-center rounded-full bg-brand-600 text-xs font-bold text-white">
+          {initials(user.name)}
+        </span>
+        <span className="hidden text-left sm:block">
+          <span className="block max-w-36 truncate text-sm font-semibold leading-tight text-ink-950">{user.name}</span>
+          <span className="block text-xs capitalize leading-tight text-slate-500">
+            {user.role === 'superadmin' ? 'Super admin' : 'Admin'}
+          </span>
+        </span>
+        <ChevronDown className={`size-4 text-slate-400 transition ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+          <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3.5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-600 text-sm font-bold text-white">
+              {initials(user.name)}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-ink-950">{user.name}</p>
+              <p className="truncate text-xs text-slate-500">{user.email}</p>
+              <span className="badge mt-1 bg-brand-50 text-brand-700">
+                {user.role === 'superadmin' ? 'Super admin' : 'Admin'}
+              </span>
+            </div>
+          </div>
+          <div className="p-1.5">
+            <Link
+              href="/admin/account"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-ink-950"
+            >
+              <UserCog className="size-4" /> Account & settings
+            </Link>
+            <button
+              type="button"
+              onClick={logout}
+              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
+            >
+              <LogOut className="size-4" /> Sign out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AdminShell({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -81,17 +162,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <Link href="/" target="_blank" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-500 hover:text-ink-950">
           <ExternalLink className="size-4" /> View site
         </Link>
-        <button
-          type="button"
-          onClick={logout}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-500 hover:text-ink-950"
-        >
-          <LogOut className="size-4" /> Sign out
-        </button>
-        <div className="px-3 pt-3 text-xs text-slate-500">
-          <p className="truncate font-medium text-ink-950">{user.name}</p>
-          <p className="truncate">{user.email}</p>
-        </div>
       </div>
     </div>
   );
@@ -108,11 +178,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       )}
 
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-slate-200 bg-white px-4 lg:hidden">
-          <button type="button" onClick={() => setOpen((v) => !v)} aria-label="Toggle menu" className="rounded-lg p-1.5">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+            className="rounded-lg p-1.5 lg:hidden"
+          >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
-          <span className="font-semibold text-ink-950">Hacama Admin</span>
+          <div className="lg:hidden">
+            <Brand />
+          </div>
+          <span className="hidden text-sm font-medium text-slate-400 lg:block">Admin console</span>
+          <div className="ml-auto">
+            <AccountMenu />
+          </div>
         </header>
         <main className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">{children}</main>
       </div>

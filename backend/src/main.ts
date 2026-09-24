@@ -7,6 +7,9 @@ import { LOCAL_UPLOAD_DIR } from './storage/storage.service';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Trust the first proxy hop (Cloud Run / load balancer) so req.ip is the real client IP.
+  app.set('trust proxy', 1);
+
   app.useStaticAssets(LOCAL_UPLOAD_DIR, { prefix: '/uploads' });
 
   app.setGlobalPrefix('api');

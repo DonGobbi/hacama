@@ -1,5 +1,6 @@
 import { clearToken, getToken } from './auth';
 import type {
+  ActivityLog,
   AdminUser,
   Application,
   ApplicationStatus,
@@ -105,6 +106,10 @@ export const publicApi = {
     request<{ id?: string; submitted: boolean }>('/enquiries', { method: 'POST', body: data }),
   login: (email: string, password: string) =>
     request<LoginResponse>('/auth/login', { method: 'POST', body: { email, password } }),
+  forgotPassword: (email: string) =>
+    request<{ message: string }>('/auth/forgot-password', { method: 'POST', body: { email } }),
+  resetPassword: (token: string, newPassword: string) =>
+    request<{ reset: boolean }>('/auth/reset-password', { method: 'POST', body: { token, newPassword } }),
 };
 
 async function authed<T>(path: string, options: Omit<RequestOptions, 'token'> = {}): Promise<T> {
@@ -121,6 +126,11 @@ async function authed<T>(path: string, options: Omit<RequestOptions, 'token'> = 
 
 export const adminApi = {
   me: () => authed<AuthUser & { _id: string }>('/auth/me'),
+  updateProfile: (data: { name?: string; phone?: string }) =>
+    authed<AdminUser>('/auth/me', { method: 'PATCH', body: data }),
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    authed<{ changed: boolean }>('/auth/change-password', { method: 'POST', body: data }),
+  activity: () => authed<ActivityLog[]>('/activity'),
 
   jobs: (params: { search?: string; status?: string; employmentType?: string } = {}) =>
     authed<Job[]>(`/jobs/admin${toQuery(params)}`),
