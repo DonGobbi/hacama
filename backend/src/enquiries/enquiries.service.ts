@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
+import { MailService } from '../mail/mail.service';
 import { CreateEnquiryDto, EnquiryQueryDto, UpdateEnquiryDto } from './enquiries.dto';
 import { Enquiry, EnquiryType } from './enquiry.schema';
 
 @Injectable()
 export class EnquiriesService {
-  constructor(@InjectModel(Enquiry.name) private readonly enquiryModel: Model<Enquiry>) {}
+  constructor(
+    @InjectModel(Enquiry.name) private readonly enquiryModel: Model<Enquiry>,
+    private readonly mail: MailService,
+  ) {}
 
   async create(dto: CreateEnquiryDto) {
     if (dto.website) return { submitted: true };
@@ -23,6 +27,14 @@ export class EnquiriesService {
       items: isQuote ? (dto.items ?? []).map((i) => ({ description: i.description, quantity: i.quantity ?? '' })) : [],
       deliveryLocation: isQuote ? (dto.deliveryLocation ?? '') : '',
       neededBy: isQuote ? (dto.neededBy ?? '') : '',
+    });
+    this.mail.notifyEnquiry({
+      type: dto.type,
+      name: dto.name,
+      organization: dto.organization ?? '',
+      email: dto.email,
+      phone: dto.phone ?? '',
+      message: dto.message ?? '',
     });
     return { id: enquiry.id, submitted: true };
   }

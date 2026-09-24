@@ -147,7 +147,14 @@ export interface Project extends ContentItem {
   summary: string;
 }
 
-export type ContentKind = 'testimonials' | 'partners' | 'projects';
+export interface News extends ContentItem {
+  title: string;
+  category: string;
+  summary: string;
+  body: string;
+}
+
+export type ContentKind = 'testimonials' | 'partners' | 'projects' | 'news';
 
 export interface Stat {
   value: string;

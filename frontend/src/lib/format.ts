@@ -8,6 +8,19 @@ export function toDateInput(value?: string | null) {
   return new Date(value).toISOString().slice(0, 10);
 }
 
+export type DeadlineState = 'open' | 'closing-soon' | 'closed';
+
+export function deadlineState(deadline?: string | null): DeadlineState | null {
+  if (!deadline) return null;
+  const end = new Date(deadline);
+  if (Number.isNaN(end.getTime())) return null;
+  end.setHours(23, 59, 59, 999);
+  const msLeft = end.getTime() - Date.now();
+  if (msLeft < 0) return 'closed';
+  if (msLeft <= 7 * 24 * 60 * 60 * 1000) return 'closing-soon';
+  return 'open';
+}
+
 export function titleCase(value: string) {
   return value.replace(/(^|[-\s])(\w)/g, (_, sep: string, ch: string) => `${sep === '-' ? ' ' : sep}${ch.toUpperCase()}`);
 }

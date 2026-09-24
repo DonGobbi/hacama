@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { JobsService } from '../jobs/jobs.service';
+import { MailService } from '../mail/mail.service';
 import { StorageService } from '../storage/storage.service';
 import { Application } from './application.schema';
 import { ApplicationQueryDto, CreateApplicationDto, UpdateApplicationDto } from './applications.dto';
@@ -12,11 +13,19 @@ export class ApplicationsService {
     @InjectModel(Application.name) private readonly applicationModel: Model<Application>,
     private readonly jobsService: JobsService,
     private readonly storage: StorageService,
+    private readonly mail: MailService,
   ) {}
 
   async create(dto: CreateApplicationDto, cv?: Express.Multer.File) {
     const job = await this.jobsService.findById(dto.jobId);
     if (job.status !== 'open') throw new NotFoundException('This job is no longer accepting applications');
+    if (job.deadline) {
+      const deadlineEnd = new Date(job.deadline);
+      deadlineEnd.setHours(23, 59, 59, 999);
+      if (deadlineEnd.getTime() < Date.now()) {
+        throw new NotFoundException('This job is no longer accepting applications');
+      }
+    }
 
     const stored = cv ? await this.storage.upload(cv, 'applications') : undefined;
 
@@ -28,6 +37,12 @@ export class ApplicationsService {
       coverLetter: dto.coverLetter ?? '',
       cvUrl: stored?.url,
       cvStoragePath: stored?.storagePath,
+    });
+    this.mail.notifyApplication({
+      jobTitle: job.title,
+      fullName: dto.fullName,
+      email: dto.email,
+      phone: dto.phone ?? '',
     });
     return { id: application.id, submitted: true };
   }

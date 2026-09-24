@@ -11,6 +11,7 @@ import type {
   Job,
   JobInput,
   LoginResponse,
+  News,
   Partner,
   Photo,
   Project,
@@ -96,6 +97,7 @@ export const publicApi = {
   testimonials: () => request<Testimonial[]>('/testimonials', { cache: 'no-store' }),
   partners: () => request<Partner[]>('/partners', { cache: 'no-store' }),
   projects: () => request<Project[]>('/projects', { cache: 'no-store' }),
+  news: () => request<News[]>('/news', { cache: 'no-store' }),
   submitEnquiry: (data: EnquiryInput) =>
     request<{ id?: string; submitted: boolean }>('/enquiries', { method: 'POST', body: data }),
   login: (email: string, password: string) =>

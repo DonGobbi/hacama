@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { ApplyForm } from '@/components/jobs/ApplyForm';
-import { ApiError, publicApi } from '@/lib/api';
-import { formatDate, titleCase } from '@/lib/format';
+import { JobCard } from '@/components/jobs/JobCard';
+import { ShareButtons } from '@/components/jobs/ShareButtons';
+import { ApiError, publicApi, safely } from '@/lib/api';
+import { deadlineState, formatDate, titleCase } from '@/lib/format';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -26,6 +28,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function JobDetailsPage({ params }: Props) {
   const job = await getJob((await params).slug);
   if (!job) notFound();
+
+  const closed = deadlineState(job.deadline) === 'closed' || job.status === 'closed';
+  const closingSoon = !closed && deadlineState(job.deadline) === 'closing-soon';
+
+  const allJobs = await safely(publicApi.jobs(), []);
+  const related = allJobs
+    .filter((j) => j._id !== job._id && j.status === 'open' && deadlineState(j.deadline) !== 'closed')
+    .sort((a, b) => Number(b.department === job.department) - Number(a.department === job.department))
+    .slice(0, 3);
 
   return (
     <>
@@ -57,10 +68,26 @@ export default async function JobDetailsPage({ params }: Props) {
               </span>
             )}
             {job.deadline && (
-              <span className="badge gap-1.5 border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-sm font-medium text-brand-700 shadow-sm">
-                <CalendarClock className="size-4" /> Apply by {formatDate(job.deadline)}
+              <span
+                className={`badge gap-1.5 border px-3.5 py-1.5 text-sm font-medium shadow-sm ${
+                  closed
+                    ? 'border-red-200 bg-red-50 text-red-700'
+                    : closingSoon
+                      ? 'border-amber-200 bg-amber-50 text-amber-800'
+                      : 'border-brand-100 bg-brand-50 text-brand-700'
+                }`}
+              >
+                <CalendarClock className="size-4" />
+                {closed
+                  ? `Applications closed ${formatDate(job.deadline)}`
+                  : closingSoon
+                    ? `Closing soon — ${formatDate(job.deadline)}`
+                    : `Apply by ${formatDate(job.deadline)}`}
               </span>
             )}
+          </div>
+          <div className="mt-6">
+            <ShareButtons title={job.title} />
           </div>
         </div>
       </section>
@@ -107,10 +134,46 @@ export default async function JobDetailsPage({ params }: Props) {
           </article>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <ApplyForm jobId={job._id} />
+            {closed ? (
+              <div className="card flex flex-col items-center gap-3 p-8 text-center">
+                <span className="flex size-14 items-center justify-center rounded-full bg-red-50">
+                  <CalendarClock className="size-8 text-red-500" />
+                </span>
+                <h3 className="text-lg font-semibold text-ink-950">Applications closed</h3>
+                <p className="text-sm text-slate-600">
+                  The deadline for this role has passed. Browse our other open positions below.
+                </p>
+                <Link href="/jobs" className="btn btn-outline btn-sm mt-1">
+                  View all jobs
+                </Link>
+              </div>
+            ) : (
+              <ApplyForm jobId={job._id} />
+            )}
           </aside>
         </div>
       </section>
+
+      {related.length > 0 && (
+        <section className="border-t border-slate-200 bg-stone-50 py-12">
+          <div className="container-page">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <span className="section-tag">Keep exploring</span>
+                <h2 className="mt-2 text-2xl font-bold tracking-tight text-ink-950">More open roles</h2>
+              </div>
+              <Link href="/jobs" className="btn btn-outline btn-sm shrink-0">
+                All jobs
+              </Link>
+            </div>
+            <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {related.map((j) => (
+                <JobCard key={j._id} job={j} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }

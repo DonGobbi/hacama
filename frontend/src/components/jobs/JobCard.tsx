@@ -1,9 +1,11 @@
 import { ArrowRight, Briefcase, CalendarClock, MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { formatDate, titleCase } from '@/lib/format';
+import { deadlineState, formatDate, titleCase } from '@/lib/format';
 import type { Job } from '@/lib/types';
 
 export function JobCard({ job }: { job: Job }) {
+  const deadline = deadlineState(job.deadline);
+  const closed = deadline === 'closed' || job.status === 'closed';
   return (
     <Link
       href={`/jobs/${job.slug}`}
@@ -14,7 +16,11 @@ export function JobCard({ job }: { job: Job }) {
           {job.department && <p className="text-xs font-semibold tracking-wider text-brand-600 uppercase">{job.department}</p>}
           <h3 className="mt-1 text-lg font-semibold text-ink-950">{job.title}</h3>
         </div>
-        <span className="badge shrink-0 bg-slate-100 text-slate-600">{titleCase(job.employmentType)}</span>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <span className="badge bg-slate-100 text-slate-600">{titleCase(job.employmentType)}</span>
+          {closed && <span className="badge bg-red-100 text-red-700">Closed</span>}
+          {deadline === 'closing-soon' && <span className="badge bg-amber-100 text-amber-800">Closing soon</span>}
+        </div>
       </div>
       <p className="line-clamp-2 text-sm text-slate-600">{job.summary}</p>
       <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
@@ -28,7 +34,8 @@ export function JobCard({ job }: { job: Job }) {
         )}
         {job.deadline && (
           <span className="inline-flex items-center gap-1.5">
-            <CalendarClock className="size-3.5" /> Apply by {formatDate(job.deadline)}
+            <CalendarClock className="size-3.5" />
+            {closed ? `Closed ${formatDate(job.deadline)}` : `Apply by ${formatDate(job.deadline)}`}
           </span>
         )}
         <span className="ml-auto inline-flex items-center gap-1 font-semibold text-ink-900 group-hover:text-brand-600">

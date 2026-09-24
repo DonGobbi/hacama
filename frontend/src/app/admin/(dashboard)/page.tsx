@@ -27,6 +27,7 @@ import type {
   Enquiry,
   EnquiryStatus,
   Job,
+  News,
   Partner,
   Photo,
   Project,
@@ -42,6 +43,7 @@ type DashboardData = {
   testimonials: Testimonial[];
   partners: Partner[];
   projects: Project[];
+  news: News[];
   settings: SiteSettings;
 };
 
@@ -133,10 +135,11 @@ export default function DashboardPage() {
       adminApi.contentList<Testimonial>('testimonials'),
       adminApi.contentList<Partner>('partners'),
       adminApi.contentList<Project>('projects'),
+      adminApi.contentList<News>('news'),
       adminApi.settings(),
     ])
-      .then(([jobs, applications, photos, enquiries, testimonials, partners, projects, settings]) =>
-        setData({ jobs, applications, photos, enquiries, testimonials, partners, projects, settings }),
+      .then(([jobs, applications, photos, enquiries, testimonials, partners, projects, news, settings]) =>
+        setData({ jobs, applications, photos, enquiries, testimonials, partners, projects, news, settings }),
       )
       .catch((err: Error) => setError(err.message));
   }, []);
@@ -183,6 +186,7 @@ export default function DashboardPage() {
   const content = data
     ? [
         { label: 'Past projects', count: visible(data.projects), href: '/admin/projects' },
+        { label: 'News articles', count: visible(data.news), href: '/admin/news' },
         { label: 'Testimonials', count: visible(data.testimonials), href: '/admin/testimonials' },
         { label: 'Partner logos', count: visible(data.partners), href: '/admin/partners' },
         { label: 'Featured photos', count: data.photos.filter((p) => p.featured).length, href: '/admin/photos' },

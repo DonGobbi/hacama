@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { EnquiriesModule } from './enquiries/enquiries.module';
 import { HealthController } from './health.controller';
 import { JobsModule } from './jobs/jobs.module';
+import { MailModule } from './mail/mail.module';
+import { NewsModule } from './news/news.module';
 import { PartnersModule } from './partners/partners.module';
 import { PhotosModule } from './photos/photos.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -24,9 +26,11 @@ import { UsersModule } from './users/users.module';
       }),
     }),
     StorageModule,
+    MailModule,
     UsersModule,
     AuthModule,
     JobsModule,
+    NewsModule,
     ApplicationsModule,
     PhotosModule,
     EnquiriesModule,
