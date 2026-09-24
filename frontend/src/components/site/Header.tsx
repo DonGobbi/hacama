@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Brand } from './Brand';
 
@@ -19,6 +19,7 @@ const NAV = [
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [hash, setHash] = useState('');
 
@@ -41,6 +42,9 @@ export function Header() {
   const track = (href: string) => {
     const i = href.indexOf('#');
     setHash(i >= 0 ? href.slice(i) : '');
+    // Clicking the link for the page you're already on is a no-op in Next —
+    // force a refetch so freshly published content shows up.
+    if (href === pathname) router.refresh();
   };
 
   return (
