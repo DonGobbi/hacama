@@ -24,6 +24,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { JobCard } from '@/components/jobs/JobCard';
 import { ContactForm } from '@/components/site/ContactForm';
+import { FeaturedPhotos } from '@/components/site/FeaturedPhotos';
 import { publicApi, safely } from '@/lib/api';
 import { DEFAULT_SETTINGS, mapEmbedUrl, telLink, whatsappLink } from '@/lib/company';
 
@@ -113,13 +114,17 @@ function initials(name: string) {
 export default async function HomePage() {
   const [jobs, photos, fetchedSettings, testimonials, partners, projects] = await Promise.all([
     safely(publicApi.jobs(), []),
-    safely(publicApi.photos({ featured: true }), []),
+    safely(publicApi.photos(), []),
     safely(publicApi.settings(), DEFAULT_SETTINGS),
     safely(publicApi.testimonials(), []),
     safely(publicApi.partners(), []),
     safely(publicApi.projects(), []),
   ]);
   const settings = { ...DEFAULT_SETTINGS, ...fetchedSettings };
+  // Rotate through photos marked "Feature on home page"; if fewer than 3 are
+  // featured, fall back to the whole gallery so the section always has motion.
+  const featuredPhotos = photos.filter((p) => p.featured);
+  const photoPool = featuredPhotos.length >= 3 ? featuredPhotos : photos;
 
   return (
     <>
@@ -471,7 +476,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {photos.length > 0 && (
+      {photoPool.length > 0 && (
         <section className="py-20">
           <div className="container-page">
             <div className="flex flex-wrap items-end justify-between gap-4">
@@ -483,17 +488,7 @@ export default async function HomePage() {
                 View gallery <ArrowRight className="size-4" />
               </Link>
             </div>
-            <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3">
-              {photos.slice(0, 6).map((photo) => (
-                <img
-                  key={photo._id}
-                  src={photo.url}
-                  alt={photo.title}
-                  loading="lazy"
-                  className="aspect-[4/3] w-full rounded-2xl object-cover"
-                />
-              ))}
-            </div>
+            <FeaturedPhotos photos={photoPool} />
           </div>
         </section>
       )}
