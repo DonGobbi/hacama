@@ -14,6 +14,11 @@ export class DemandsController {
     return this.demandsService.findPublished();
   }
 
+  @Get('slug/:slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.demandsService.findPublicBySlug(slug);
+  }
+
   @Get('admin')
   @UseGuards(JwtAuthGuard)
   findAll() {

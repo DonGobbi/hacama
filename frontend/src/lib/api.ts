@@ -100,6 +100,7 @@ export const publicApi = {
   projects: () => request<Project[]>('/projects', { cache: 'no-store' }),
   news: () => request<News[]>('/news', { cache: 'no-store' }),
   demands: () => request<Demand[]>('/demands', { cache: 'no-store' }),
+  demandBySlug: (slug: string) => request<Demand>(`/demands/slug/${encodeURIComponent(slug)}`, { cache: 'no-store' }),
   submitEnquiry: (data: EnquiryInput) =>
     request<{ id?: string; submitted: boolean }>('/enquiries', { method: 'POST', body: data }),
   login: (email: string, password: string) =>

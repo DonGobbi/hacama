@@ -8,6 +8,9 @@ export class Demand {
   @Prop({ required: true, trim: true })
   title: string;
 
+  @Prop({ required: true, unique: true, index: true })
+  slug: string;
+
   @Prop({ required: true, trim: true })
   quantity: string;
 

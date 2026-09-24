@@ -158,6 +158,7 @@ export type DemandStatus = 'open' | 'fulfilled';
 
 export interface Demand extends ContentItem {
   title: string;
+  slug: string;
   quantity: string;
   price: string;
   location: string;
