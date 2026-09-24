@@ -24,6 +24,7 @@ import { useAuth } from '@/components/admin/AuthProvider';
 import { adminApi } from '@/lib/api';
 import type {
   Application,
+  Demand,
   Enquiry,
   EnquiryStatus,
   Job,
@@ -44,6 +45,7 @@ type DashboardData = {
   partners: Partner[];
   projects: Project[];
   news: News[];
+  demands: Demand[];
   settings: SiteSettings;
 };
 
@@ -136,10 +138,11 @@ export default function DashboardPage() {
       adminApi.contentList<Partner>('partners'),
       adminApi.contentList<Project>('projects'),
       adminApi.contentList<News>('news'),
+      adminApi.contentList<Demand>('demands'),
       adminApi.settings(),
     ])
-      .then(([jobs, applications, photos, enquiries, testimonials, partners, projects, news, settings]) =>
-        setData({ jobs, applications, photos, enquiries, testimonials, partners, projects, news, settings }),
+      .then(([jobs, applications, photos, enquiries, testimonials, partners, projects, news, demands, settings]) =>
+        setData({ jobs, applications, photos, enquiries, testimonials, partners, projects, news, demands, settings }),
       )
       .catch((err: Error) => setError(err.message));
   }, []);
@@ -187,6 +190,7 @@ export default function DashboardPage() {
     ? [
         { label: 'Past projects', count: visible(data.projects), href: '/admin/projects' },
         { label: 'News articles', count: visible(data.news), href: '/admin/news' },
+        { label: 'Market demands', count: visible(data.demands), href: '/admin/demands' },
         { label: 'Testimonials', count: visible(data.testimonials), href: '/admin/testimonials' },
         { label: 'Partner logos', count: visible(data.partners), href: '/admin/partners' },
         { label: 'Featured photos', count: data.photos.filter((p) => p.featured).length, href: '/admin/photos' },

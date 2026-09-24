@@ -154,7 +154,19 @@ export interface News extends ContentItem {
   body: string;
 }
 
-export type ContentKind = 'testimonials' | 'partners' | 'projects' | 'news';
+export type DemandStatus = 'open' | 'fulfilled';
+
+export interface Demand extends ContentItem {
+  title: string;
+  quantity: string;
+  price: string;
+  location: string;
+  details: string;
+  contact: string;
+  status: DemandStatus;
+}
+
+export type ContentKind = 'testimonials' | 'partners' | 'projects' | 'news' | 'demands';
 
 export interface Stat {
   value: string;

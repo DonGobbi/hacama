@@ -10,7 +10,8 @@ import type { ContentKind } from '@/lib/types';
 export type CollectionField = {
   name: string;
   label: string;
-  type?: 'text' | 'textarea' | 'url';
+  type?: 'text' | 'textarea' | 'url' | 'select';
+  options?: { value: string; label: string }[];
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -143,6 +144,14 @@ export function CollectionManager<T extends BaseItem>({
                 placeholder={field.placeholder}
                 defaultValue={value(field.name)}
               />
+            ) : field.type === 'select' ? (
+              <select className="input" name={field.name} required={field.required} defaultValue={value(field.name)}>
+                {field.options?.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             ) : (
               <input
                 className="input"

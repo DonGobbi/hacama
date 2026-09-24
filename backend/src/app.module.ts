@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApplicationsModule } from './applications/applications.module';
 import { AuthModule } from './auth/auth.module';
+import { DemandsModule } from './demands/demands.module';
 import { EnquiriesModule } from './enquiries/enquiries.module';
 import { HealthController } from './health.controller';
 import { JobsModule } from './jobs/jobs.module';
@@ -31,6 +32,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     JobsModule,
     NewsModule,
+    DemandsModule,
     ApplicationsModule,
     PhotosModule,
     EnquiriesModule,

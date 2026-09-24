@@ -21,6 +21,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             <li><Link href="/#services" className="hover:text-ink-950">Services</Link></li>
             <li><Link href="/quote" className="hover:text-ink-950">Request a Quote</Link></li>
             <li><Link href="/jobs" className="hover:text-ink-950">Careers</Link></li>
+            <li><Link href="/demands" className="hover:text-ink-950">We Buy</Link></li>
             <li><Link href="/news" className="hover:text-ink-950">News</Link></li>
             <li><Link href="/gallery" className="hover:text-ink-950">Gallery</Link></li>
           </ul>

@@ -16,6 +16,7 @@ import {
   Quote,
   Settings,
   Users,
+  Wheat,
   X,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -32,6 +33,7 @@ const NAV = [
   { href: '/admin/photos', label: 'Photos', icon: Images },
   { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
   { href: '/admin/news', label: 'News', icon: Newspaper },
+  { href: '/admin/demands', label: 'Demands', icon: Wheat },
   { href: '/admin/testimonials', label: 'Testimonials', icon: Quote },
   { href: '/admin/partners', label: 'Partners', icon: Handshake },
   { href: '/admin/settings', label: 'Site settings', icon: Settings },

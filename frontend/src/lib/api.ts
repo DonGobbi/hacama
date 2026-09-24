@@ -5,6 +5,7 @@ import type {
   ApplicationStatus,
   AuthUser,
   ContentKind,
+  Demand,
   Enquiry,
   EnquiryInput,
   EnquiryStatus,
@@ -98,6 +99,7 @@ export const publicApi = {
   partners: () => request<Partner[]>('/partners', { cache: 'no-store' }),
   projects: () => request<Project[]>('/projects', { cache: 'no-store' }),
   news: () => request<News[]>('/news', { cache: 'no-store' }),
+  demands: () => request<Demand[]>('/demands', { cache: 'no-store' }),
   submitEnquiry: (data: EnquiryInput) =>
     request<{ id?: string; submitted: boolean }>('/enquiries', { method: 'POST', body: data }),
   login: (email: string, password: string) =>
