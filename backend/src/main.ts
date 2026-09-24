@@ -13,8 +13,14 @@ async function bootstrap() {
   app.useStaticAssets(LOCAL_UPLOAD_DIR, { prefix: '/uploads' });
 
   app.setGlobalPrefix('api');
+  const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(',');
   app.enableCors({
-    origin: (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(','),
+    // Allow configured origins plus any localhost/127.0.0.1 origin (any port) —
+    // needed for local dev tools that proxy the site (e.g. browser previews).
+    origin: (origin, cb) => {
+      const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin ?? '');
+      cb(null, !origin || corsOrigins.includes(origin) || isLocal);
+    },
     credentials: true,
   });
   app.useGlobalPipes(
