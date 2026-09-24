@@ -10,6 +10,10 @@
     --color-brand-700: #8d3f2f;
     --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
     --animate-photo-in: photo-in 0.9s ease-out both;
+    --animate-slide-in-right: slide-in-right 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-slide-in-left: slide-in-left 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-slide-out-left: slide-out-left 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-slide-out-right: slide-out-right 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
     @keyframes photo-in {
         from {
             opacity: 0;
@@ -18,6 +22,46 @@
         to {
             opacity: 1;
             transform: scale(1);
+        }
+    }
+    @keyframes slide-in-right {
+        from {
+            opacity: 0;
+            transform: translateX(48px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    @keyframes slide-in-left {
+        from {
+            opacity: 0;
+            transform: translateX(-48px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    @keyframes slide-out-left {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(-48px);
+        }
+    }
+    @keyframes slide-out-right {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(48px);
         }
     }
 }

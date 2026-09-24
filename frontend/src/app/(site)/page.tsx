@@ -14,7 +14,6 @@ import {
   Package,
   PackageSearch,
   Phone,
-  Quote,
   ShieldCheck,
   Sprout,
   Tractor,
@@ -25,6 +24,7 @@ import Link from 'next/link';
 import { JobCard } from '@/components/jobs/JobCard';
 import { ContactForm } from '@/components/site/ContactForm';
 import { FeaturedPhotos } from '@/components/site/FeaturedPhotos';
+import { TestimonialCarousel } from '@/components/site/TestimonialCarousel';
 import { publicApi, safely } from '@/lib/api';
 import { DEFAULT_SETTINGS, mapEmbedUrl, telLink, whatsappLink } from '@/lib/company';
 
@@ -102,14 +102,6 @@ const HOW_WE_WORK = [
     text: 'We deliver to your location and follow through, staying accountable for a dependable outcome.',
   },
 ];
-
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-}
 
 export default async function HomePage() {
   const [jobs, photos, fetchedSettings, testimonials, partners, projects] = await Promise.all([
@@ -424,29 +416,7 @@ export default async function HomePage() {
               <span className="section-tag">Testimonials</span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">What our customers say.</h2>
             </div>
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {testimonials.map((t) => (
-                <figure key={t._id} className="card flex flex-col p-6">
-                  <Quote className="size-6 text-brand-500" />
-                  <blockquote className="mt-4 flex-1 text-slate-700">{t.quote}</blockquote>
-                  <figcaption className="mt-6 flex items-center gap-3">
-                    {t.imageUrl ? (
-                      <img src={t.imageUrl} alt="" loading="lazy" className="size-10 rounded-full object-cover" />
-                    ) : (
-                      <span className="grid size-10 place-items-center rounded-full bg-brand-50 text-sm font-semibold text-brand-600">
-                        {initials(t.name)}
-                      </span>
-                    )}
-                    <span className="text-sm">
-                      <span className="block font-semibold text-ink-950">{t.name}</span>
-                      {(t.role || t.organization) && (
-                        <span className="block text-slate-500">{[t.role, t.organization].filter(Boolean).join(', ')}</span>
-                      )}
-                    </span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
+            <TestimonialCarousel testimonials={testimonials} />
           </div>
         </section>
       )}
