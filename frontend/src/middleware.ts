@@ -1,12 +1,16 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { TOKEN_COOKIE } from './lib/auth';
 
+const PUBLIC_ADMIN_PATHS = ['/admin/login', '/admin/forgot-password', '/admin/reset-password'];
+
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const hasToken = Boolean(request.cookies.get(TOKEN_COOKIE)?.value);
 
-  if (pathname === '/admin/login') {
-    if (hasToken) return NextResponse.redirect(new URL('/admin', request.url));
+  if (PUBLIC_ADMIN_PATHS.includes(pathname)) {
+    if (pathname === '/admin/login' && hasToken) {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
     return NextResponse.next();
   }
 
