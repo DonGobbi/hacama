@@ -6,6 +6,9 @@ export class Project {
   @Prop({ required: true, trim: true })
   title: string;
 
+  @Prop({ unique: true, sparse: true, index: true })
+  slug?: string;
+
   @Prop({ default: '', trim: true })
   client: string;
 
@@ -17,6 +20,9 @@ export class Project {
 
   @Prop({ default: '' })
   summary: string;
+
+  @Prop({ default: '' })
+  details: string;
 
   @Prop()
   imageUrl?: string;

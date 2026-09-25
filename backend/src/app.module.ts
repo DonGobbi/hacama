@@ -13,9 +13,12 @@ import { NewsModule } from './news/news.module';
 import { PartnersModule } from './partners/partners.module';
 import { PhotosModule } from './photos/photos.module';
 import { ProjectsModule } from './projects/projects.module';
+import { SearchModule } from './search/search.module';
 import { SettingsModule } from './settings/settings.module';
 import { StorageModule } from './storage/storage.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
+import { SuppliersModule } from './suppliers/suppliers.module';
+import { TendersModule } from './tenders/tenders.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { UsersModule } from './users/users.module';
 
@@ -41,6 +44,9 @@ import { UsersModule } from './users/users.module';
     EnquiriesModule,
     TestimonialsModule,
     SubscribersModule,
+    SuppliersModule,
+    TendersModule,
+    SearchModule,
     PartnersModule,
     ProjectsModule,
     SettingsModule,

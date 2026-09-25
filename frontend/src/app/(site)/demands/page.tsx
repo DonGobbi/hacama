@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { DemandCard } from '@/components/demands/DemandCard';
 import { PageHero } from '@/components/site/PageHero';
+import { SupplierForm } from '@/components/site/SupplierForm';
 import { publicApi, safely } from '@/lib/api';
 
 export const metadata: Metadata = { title: 'We Buy: Market Demands' };
@@ -35,6 +36,20 @@ export default async function DemandsPage() {
               No active demands right now. Check back soon or contact us with your offer.
             </p>
           )}
+        </div>
+      </section>
+
+      <section id="suppliers" className="scroll-mt-24 border-t border-slate-200 bg-stone-50 py-16">
+        <div className="container-page max-w-3xl">
+          <span className="section-tag">Supply to us</span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">Register as a supplier</h2>
+          <p className="mt-3 text-slate-600">
+            We are always onboarding reliable vendors for commodities and goods across Malawi. Register your company and
+            we will contact you when we need what you supply.
+          </p>
+          <div className="card mt-8 p-6 sm:p-8">
+            <SupplierForm />
+          </div>
         </div>
       </section>
     </>

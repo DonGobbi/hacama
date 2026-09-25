@@ -19,3 +19,12 @@ export const requiredPdf = () =>
       new FileTypeValidator({ fileType: /^application\/pdf$/ }),
     ],
   });
+
+export const optionalPdf = () =>
+  new ParseFilePipe({
+    fileIsRequired: false,
+    validators: [
+      new MaxFileSizeValidator({ maxSize: 15 * 1024 * 1024 }),
+      new FileTypeValidator({ fileType: /^application\/pdf$/ }),
+    ],
+  });

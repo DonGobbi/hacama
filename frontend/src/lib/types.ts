@@ -156,10 +156,12 @@ export interface Partner extends ContentItem {
 
 export interface Project extends ContentItem {
   title: string;
+  slug?: string;
   client: string;
   category: string;
   year: string;
   summary: string;
+  details: string;
 }
 
 export interface News extends ContentItem {
@@ -182,7 +184,58 @@ export interface Demand extends ContentItem {
   status: DemandStatus;
 }
 
-export type ContentKind = 'testimonials' | 'partners' | 'projects' | 'news' | 'demands';
+export type ContentKind = 'testimonials' | 'partners' | 'projects' | 'news' | 'demands' | 'tenders';
+
+export type TenderStatus = 'open' | 'closed';
+
+export interface Tender {
+  _id: string;
+  title: string;
+  reference: string;
+  summary: string;
+  description: string;
+  deadline?: string;
+  status: TenderStatus;
+  documentUrl?: string;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type SupplierStatus = 'new' | 'contacted' | 'approved' | 'rejected';
+
+export interface Supplier {
+  _id: string;
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  location: string;
+  categories: string[];
+  notes: string;
+  status: SupplierStatus;
+  createdAt: string;
+}
+
+export interface SupplierInput {
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  phone?: string;
+  location?: string;
+  categories?: string[];
+  notes?: string;
+  website?: string;
+}
+
+export interface SearchResults {
+  q: string;
+  jobs: Job[];
+  demands: Demand[];
+  news: News[];
+  projects: Project[];
+  tenders: Tender[];
+}
 
 export interface Subscriber {
   _id: string;
@@ -219,6 +272,8 @@ export interface SiteSettings {
   email: string;
   address: string;
   officeHours: string;
+  announcement: string;
+  announcementLink: string;
   stats: Stat[];
   credentials: Credential[];
   faqs: Faq[];

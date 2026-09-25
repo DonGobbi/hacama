@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { Menu, X } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ const NAV = [
   { href: '/#services', label: 'Services' },
   { href: '/jobs', label: 'Jobs' },
   { href: '/demands', label: 'We Buy' },
+  { href: '/tenders', label: 'Tenders' },
   { href: '/news', label: 'News' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/#contact', label: 'Contact' },
@@ -66,7 +67,17 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link href="/quote" className="btn btn-primary btn-sm ml-3">
+          <Link
+            href="/search"
+            aria-label="Search the site"
+            className={clsx(
+              'ml-2 rounded-full p-2 transition',
+              isActive('/search') ? 'bg-slate-100 text-ink-950' : 'text-slate-600 hover:text-ink-950',
+            )}
+          >
+            <Search className="size-4.5" />
+          </Link>
+          <Link href="/quote" className="btn btn-primary btn-sm ml-1">
             Request a Quote
           </Link>
         </nav>
@@ -99,6 +110,13 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/search"
+              onClick={() => setOpen(false)}
+              className="mt-1 flex items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-100"
+            >
+              <Search className="size-5" /> Search
+            </Link>
             <Link href="/quote" onClick={() => setOpen(false)} className="btn btn-primary mt-2">
               Request a Quote
             </Link>

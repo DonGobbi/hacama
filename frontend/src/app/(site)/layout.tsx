@@ -1,3 +1,4 @@
+import { AnnouncementBar } from '@/components/site/AnnouncementBar';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
 import { WhatsAppButton } from '@/components/site/WhatsAppButton';
@@ -9,6 +10,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-screen flex-col">
+      <AnnouncementBar settings={settings} />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer settings={settings} />

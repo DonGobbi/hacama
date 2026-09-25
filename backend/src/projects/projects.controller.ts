@@ -14,6 +14,11 @@ export class ProjectsController {
     return this.projectsService.findPublished();
   }
 
+  @Get('slug/:slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.projectsService.findPublicBySlug(slug);
+  }
+
   @Get('admin')
   @UseGuards(JwtAuthGuard)
   findAll() {

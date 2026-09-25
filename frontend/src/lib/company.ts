@@ -18,6 +18,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   email: '',
   address: '',
   officeHours: '',
+  announcement: '',
+  announcementLink: '',
   stats: [],
   credentials: [],
   faqs: [],

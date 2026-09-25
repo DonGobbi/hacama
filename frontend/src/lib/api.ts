@@ -20,8 +20,12 @@ import type {
   SettingsInput,
   SiteSettings,
   Subscriber,
+  Supplier,
+  SupplierInput,
+  Tender,
   Testimonial,
   TestimonialInput,
+  SearchResults,
   UserRole,
 } from './types';
 
@@ -104,6 +108,11 @@ export const publicApi = {
   news: () => request<News[]>('/news', { cache: 'no-store' }),
   demands: () => request<Demand[]>('/demands', { cache: 'no-store' }),
   demandBySlug: (slug: string) => request<Demand>(`/demands/slug/${encodeURIComponent(slug)}`, { cache: 'no-store' }),
+  projectBySlug: (slug: string) => request<Project>(`/projects/slug/${encodeURIComponent(slug)}`, { cache: 'no-store' }),
+  tenders: () => request<Tender[]>('/tenders', { cache: 'no-store' }),
+  search: (q: string) => request<SearchResults>(`/search?q=${encodeURIComponent(q)}`, { cache: 'no-store' }),
+  registerSupplier: (data: SupplierInput) =>
+    request<{ registered: boolean }>('/suppliers', { method: 'POST', body: data }),
   submitEnquiry: (data: EnquiryInput) =>
     request<{ id?: string; submitted: boolean }>('/enquiries', { method: 'POST', body: data }),
   submitTestimonial: (data: TestimonialInput) =>
@@ -160,6 +169,10 @@ export const adminApi = {
   enquiries: (params: { type?: string; status?: string } = {}) => authed<Enquiry[]>(`/enquiries${toQuery(params)}`),
   subscribers: () => authed<Subscriber[]>('/subscribers/admin'),
   deleteSubscriber: (id: string) => authed<{ deleted: boolean }>(`/subscribers/${id}`, { method: 'DELETE' }),
+  suppliers: () => authed<Supplier[]>('/suppliers/admin'),
+  updateSupplier: (id: string, data: Partial<Pick<Supplier, 'status' | 'notes'>>) =>
+    authed<Supplier>(`/suppliers/${id}`, { method: 'PATCH', body: data }),
+  deleteSupplier: (id: string) => authed<{ deleted: boolean }>(`/suppliers/${id}`, { method: 'DELETE' }),
   updateEnquiry: (id: string, data: { status?: EnquiryStatus; notes?: string }) =>
     authed<Enquiry>(`/enquiries/${id}`, { method: 'PATCH', body: data }),
   deleteEnquiry: (id: string) => authed<{ deleted: boolean }>(`/enquiries/${id}`, { method: 'DELETE' }),

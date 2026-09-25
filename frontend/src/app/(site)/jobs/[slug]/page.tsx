@@ -32,6 +32,38 @@ export default async function JobDetailsPage({ params }: Props) {
   const closed = deadlineState(job.deadline) === 'closed' || job.status === 'closed';
   const closingSoon = !closed && deadlineState(job.deadline) === 'closing-soon';
 
+  // Structured data so listings can surface in Google for Jobs.
+  const employmentTypes: Record<string, string> = {
+    'full-time': 'FULL_TIME',
+    'part-time': 'PART_TIME',
+    contract: 'CONTRACTOR',
+    internship: 'INTERN',
+    temporary: 'TEMPORARY',
+  };
+  const jobJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title: job.title,
+    description: `${job.summary}\n\n${job.description}`,
+    datePosted: job.createdAt,
+    ...(job.deadline ? { validThrough: job.deadline } : {}),
+    employmentType: employmentTypes[job.employmentType] ?? 'FULL_TIME',
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: 'Hacama Investments',
+      sameAs: 'https://hacama-web-370098605562.africa-south1.run.app',
+    },
+    jobLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: job.location,
+        addressCountry: 'MW',
+      },
+    },
+    ...(job.department ? { occupationalCategory: job.department } : {}),
+  };
+
   const allJobs = await safely(publicApi.jobs(), []);
   const related = allJobs
     .filter((j) => j._id !== job._id && j.status === 'open' && deadlineState(j.deadline) !== 'closed')
@@ -40,6 +72,7 @@ export default async function JobDetailsPage({ params }: Props) {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobJsonLd) }} />
       <section className="relative overflow-hidden border-b border-slate-200 bg-stone-50 text-ink-950">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,75,56,0.08),transparent_35%)]" />
         <div className="container-page relative py-14 sm:py-16">

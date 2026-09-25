@@ -74,6 +74,16 @@ export class UpdateSettingsDto {
   officeHours?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  announcement?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  announcementLink?: string;
+
+  @IsOptional()
   @IsArray()
   @ArrayMaxSize(8)
   @ValidateNested({ each: true })

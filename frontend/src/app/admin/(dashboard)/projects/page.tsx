@@ -17,6 +17,14 @@ export default function AdminProjectsPage() {
         { name: 'category', label: 'Category', maxLength: 120, placeholder: 'e.g. Education & Institutional Supplies' },
         { name: 'year', label: 'Year', maxLength: 20, placeholder: 'e.g. 2024' },
         { name: 'summary', label: 'Summary', type: 'textarea', maxLength: 2000 },
+        {
+          name: 'details',
+          label: 'Details (shown on the project page)',
+          type: 'textarea',
+          maxLength: 10000,
+          wide: true,
+          placeholder: 'Full case study: scope, items supplied, outcome...',
+        },
       ]}
       primary={(p) => p.title}
       secondary={(p) => [p.client, p.year].filter(Boolean).join(' · ')}

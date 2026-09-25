@@ -45,6 +45,12 @@ export class Settings {
   @Prop({ default: '', trim: true })
   officeHours: string;
 
+  @Prop({ default: '', trim: true })
+  announcement: string;
+
+  @Prop({ default: '', trim: true })
+  announcementLink: string;
+
   @Prop({ type: [SchemaFactory.createForClass(Stat)], default: [] })
   stats: Stat[];
 

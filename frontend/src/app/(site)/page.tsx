@@ -27,6 +27,7 @@ import { FeaturedPhotos } from '@/components/site/FeaturedPhotos';
 import { TestimonialCarousel } from '@/components/site/TestimonialCarousel';
 import { publicApi, safely } from '@/lib/api';
 import { DEFAULT_SETTINGS, mapEmbedUrl, telLink, whatsappLink } from '@/lib/company';
+import { projectSlug } from '@/lib/format';
 
 const SERVICES = [
   {
@@ -384,14 +385,18 @@ export default async function HomePage() {
             </div>
             <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (
-                <article key={project._id} className="card overflow-hidden">
+                <Link
+                  key={project._id}
+                  href={`/projects/${projectSlug(project)}`}
+                  className="card group overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
+                >
                   {project.imageUrl && (
                     <Image
                       src={project.imageUrl}
                       alt={project.title}
                       width={800}
                       height={500}
-                      className="aspect-[16/10] w-full object-cover"
+                      className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                   )}
                   <div className="p-6">
@@ -400,11 +405,14 @@ export default async function HomePage() {
                         {[project.category, project.year].filter(Boolean).join(' · ')}
                       </p>
                     )}
-                    <h3 className="mt-2 text-lg font-semibold text-ink-950">{project.title}</h3>
+                    <h3 className="mt-2 text-lg font-semibold text-ink-950 group-hover:text-brand-700">{project.title}</h3>
                     {project.client && <p className="mt-1 text-sm text-slate-500">{project.client}</p>}
                     {project.summary && <p className="mt-3 text-sm text-slate-600">{project.summary}</p>}
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600">
+                      View project <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+                    </span>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           </div>

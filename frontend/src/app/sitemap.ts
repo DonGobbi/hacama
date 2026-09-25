@@ -1,15 +1,22 @@
 import type { MetadataRoute } from 'next';
 import { publicApi, safely } from '@/lib/api';
 import { SITE_URL } from '@/lib/company';
+import { projectSlug } from '@/lib/format';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [jobs, demands] = await Promise.all([safely(publicApi.jobs(), []), safely(publicApi.demands(), [])]);
+  const [jobs, demands, projects] = await Promise.all([
+    safely(publicApi.jobs(), []),
+    safely(publicApi.demands(), []),
+    safely(publicApi.projects(), []),
+  ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { path: '', priority: 1 },
     { path: '/demands', priority: 0.9 },
     { path: '/gallery', priority: 0.8 },
     { path: '/jobs', priority: 0.8 },
+    { path: '/projects', priority: 0.8 },
+    { path: '/tenders', priority: 0.8 },
     { path: '/news', priority: 0.7 },
     { path: '/testimonials', priority: 0.7 },
     { path: '/quote', priority: 0.8 },
@@ -34,5 +41,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...jobRoutes, ...demandRoutes];
+  const projectRoutes: MetadataRoute.Sitemap = projects.map((p) => ({
+    url: `${SITE_URL}/projects/${projectSlug(p)}`,
+    lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.6,
+  }));
+
+  return [...staticRoutes, ...jobRoutes, ...demandRoutes, ...projectRoutes];
 }

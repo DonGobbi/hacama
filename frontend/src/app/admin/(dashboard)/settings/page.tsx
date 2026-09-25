@@ -118,6 +118,8 @@ export default function AdminSettingsPage() {
         email: settings.email.trim(),
         address: settings.address.trim(),
         officeHours: settings.officeHours.trim(),
+        announcement: settings.announcement.trim(),
+        announcementLink: settings.announcementLink.trim(),
         stats,
         credentials,
         faqs,
@@ -214,6 +216,36 @@ export default function AdminSettingsPage() {
               maxLength={300}
               placeholder="Street, area, Lilongwe - a map is shown on the website when this is filled in"
               onChange={(e) => set('address', e.target.value)}
+            />
+          </label>
+        </section>
+
+        <section className="card grid gap-4 p-5 md:grid-cols-2">
+          <div className="md:col-span-2">
+            <h2 className="font-semibold text-ink-950">Announcement bar</h2>
+            <p className="text-sm text-slate-500">
+              A slim banner pinned to the top of every page, e.g. &quot;Now buying maize: get a quote&quot;. Clear the text to
+              hide it.
+            </p>
+          </div>
+          <label className="block">
+            <span className="label">Announcement text</span>
+            <input
+              className="input"
+              value={settings.announcement}
+              maxLength={160}
+              placeholder="e.g. Now buying maize: we pay within 48 hours"
+              onChange={(e) => set('announcement', e.target.value)}
+            />
+          </label>
+          <label className="block">
+            <span className="label">Link (optional)</span>
+            <input
+              className="input"
+              value={settings.announcementLink}
+              maxLength={300}
+              placeholder="e.g. /demands or /quote"
+              onChange={(e) => set('announcementLink', e.target.value)}
             />
           </label>
         </section>

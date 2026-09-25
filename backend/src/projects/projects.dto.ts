@@ -30,6 +30,16 @@ export class CreateProjectDto {
   summary?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(10000)
+  details?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(80)
+  slug?: string;
+
+  @IsOptional()
   @Transform(toBoolean)
   @IsBoolean()
   published?: boolean;
