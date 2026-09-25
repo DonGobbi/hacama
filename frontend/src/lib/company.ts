@@ -1,5 +1,8 @@
 import type { SiteSettings } from './types';
 
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hacama-web-370098605562.africa-south1.run.app';
+
 export const SUPPLY_CATEGORIES = [
   'Agriculture & Farm Supplies',
   'Education & Institutional Supplies',
