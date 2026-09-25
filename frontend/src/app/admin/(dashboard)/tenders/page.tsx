@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2, FileDown, Loader2, Plus, ScrollText, Trash2, Upload } from 'lucide-react';
+import { CalendarClock, CheckCircle2, FileDown, Loader2, Plus, ScrollText, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
 import { adminApi } from '@/lib/api';
@@ -205,47 +205,57 @@ export default function AdminTendersPage() {
             <p className="text-sm text-slate-500">No tenders yet. Publish the first one above.</p>
           </div>
         )}
-        <ul className="divide-y divide-slate-100">
+        <ul className="space-y-3">
           {tenders?.map((t) => (
-            <li key={t._id} className="flex flex-wrap items-center gap-3 py-3.5">
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-ink-950">
-                  {t.reference ? <span className="text-slate-400">{t.reference}: </span> : ''}
-                  {t.title}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {t.deadline ? `Closes ${formatDate(t.deadline)}` : 'No closing date'}
-                  {t.documentUrl && ' · PDF attached'}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <StatusBadge value={t.status} />
-                {!t.published && <StatusBadge value="draft" />}
-                {t.documentUrl && (
-                  <a href={t.documentUrl} target="_blank" rel="noreferrer" aria-label="Download document" className="rounded-lg p-1.5 text-slate-400 hover:text-brand-600">
-                    <FileDown className="size-4" />
-                  </a>
-                )}
-                <select
-                  value={t.status}
-                  onChange={(e) => setStatus(t, e.target.value as 'open' | 'closed')}
-                  className="input h-8 w-24 text-xs"
-                  aria-label="Tender status"
-                >
-                  <option value="open">Open</option>
-                  <option value="closed">Closed</option>
-                </select>
-                <button type="button" onClick={() => startEdit(t)} className="btn btn-outline btn-sm">
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => remove(t)}
-                  aria-label="Delete tender"
-                  className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
-                >
-                  <Trash2 className="size-4" />
-                </button>
+            <li key={t._id} className="card p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2.5">
+                    {t.reference && <span className="section-tag">{t.reference}</span>}
+                    <StatusBadge value={t.status} />
+                    {!t.published && <StatusBadge value="draft" />}
+                  </div>
+                  <h3 className="mt-1.5 font-semibold text-ink-950">{t.title}</h3>
+                  {t.summary && <p className="mt-1 line-clamp-2 text-sm text-slate-600">{t.summary}</p>}
+                  <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
+                    <span className="inline-flex items-center gap-1.5">
+                      <CalendarClock className="size-3.5" />
+                      {t.deadline ? `Closes ${formatDate(t.deadline)}` : 'No closing date'}
+                    </span>
+                    {t.documentUrl && (
+                      <a
+                        href={t.documentUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 text-brand-600 hover:underline"
+                      >
+                        <FileDown className="size-3.5" /> Tender document
+                      </a>
+                    )}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <select
+                    value={t.status}
+                    onChange={(e) => setStatus(t, e.target.value as 'open' | 'closed')}
+                    className="input h-8 w-24 text-xs"
+                    aria-label="Tender status"
+                  >
+                    <option value="open">Open</option>
+                    <option value="closed">Closed</option>
+                  </select>
+                  <button type="button" onClick={() => startEdit(t)} className="btn btn-outline btn-sm">
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => remove(t)}
+                    aria-label="Delete tender"
+                    className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
               </div>
             </li>
           ))}
