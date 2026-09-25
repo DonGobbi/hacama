@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { telLink } from '@/lib/company';
 import type { SiteSettings } from '@/lib/types';
 import { Brand } from './Brand';
+import { NewsletterForm } from './NewsletterForm';
 
 export function Footer({ settings }: { settings: SiteSettings }) {
   return (
@@ -10,9 +11,13 @@ export function Footer({ settings }: { settings: SiteSettings }) {
         <div className="space-y-4">
           <Brand />
           <p className="max-w-sm text-sm">
-            A diversified investment, procurement, and supply company in Lilongwe, Malawi — reliable sourcing and
+            A diversified investment, procurement, and supply company in Lilongwe, Malawi, offering reliable sourcing and
             dependable service.
           </p>
+          <div className="max-w-sm">
+            <p className="mb-2 text-sm font-semibold text-ink-950">Get updates from Hacama</p>
+            <NewsletterForm />
+          </div>
         </div>
         <div>
           <h3 className="mb-3 text-sm font-semibold text-ink-950">Explore</h3>

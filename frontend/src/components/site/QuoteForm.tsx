@@ -64,7 +64,7 @@ export function QuoteForm({ initialCategory = '' }: { initialCategory?: string }
     return (
       <div className="card flex flex-col items-center gap-3 p-10 text-center" role="status" aria-live="polite">
         <CheckCircle2 className="size-12 text-emerald-600" />
-        <h2 className="text-xl font-semibold text-ink-950">Request received — thank you, {sentTo}.</h2>
+        <h2 className="text-xl font-semibold text-ink-950">Request received - thank you, {sentTo}.</h2>
         <p className="max-w-md text-sm text-slate-600">
           We will review your requirements and get back to you with a quotation.
         </p>

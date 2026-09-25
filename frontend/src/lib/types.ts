@@ -184,6 +184,20 @@ export interface Demand extends ContentItem {
 
 export type ContentKind = 'testimonials' | 'partners' | 'projects' | 'news' | 'demands';
 
+export interface Subscriber {
+  _id: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface TestimonialInput {
+  quote: string;
+  name: string;
+  role?: string;
+  organization?: string;
+  website?: string;
+}
+
 export interface Stat {
   value: string;
   label: string;

@@ -84,7 +84,7 @@ export default function AdminPhotosPage() {
 
       <form ref={formRef} onSubmit={upload} className="card mb-8 grid gap-4 p-5 md:grid-cols-2 lg:grid-cols-4">
         <label className="block lg:col-span-4">
-          <span className="label">Image (JPEG, PNG, WebP, GIF — max 10 MB) *</span>
+          <span className="label">Image (JPEG, PNG, WebP, GIF - max 10 MB) *</span>
           <input
             type="file"
             name="file"

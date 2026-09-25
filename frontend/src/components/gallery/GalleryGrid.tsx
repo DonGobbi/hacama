@@ -1,15 +1,24 @@
 'use client';
 
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
+import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Photo } from '@/lib/types';
 
 export function GalleryGrid({ photos, categories }: { photos: Photo[]; categories: string[] }) {
   const [category, setCategory] = useState('');
+  const [query, setQuery] = useState('');
   const [active, setActive] = useState<number | null>(null);
 
-  const visible = useMemo(() => (category ? photos.filter((p) => p.category === category) : photos), [photos, category]);
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return photos.filter(
+      (p) =>
+        (!category || p.category === category) &&
+        (!q || p.title.toLowerCase().includes(q) || p.caption.toLowerCase().includes(q)),
+    );
+  }, [photos, category, query]);
 
   const close = useCallback(() => setActive(null), []);
   const step = useCallback(
@@ -36,27 +45,42 @@ export function GalleryGrid({ photos, categories }: { photos: Photo[]; categorie
 
   return (
     <>
-      {categories.length > 1 && (
-        <div className="mb-8 flex flex-wrap gap-2">
-          {['', ...categories].map((c) => (
-            <button
-              key={c || 'all'}
-              type="button"
-              onClick={() => setCategory(c)}
-              className={clsx(
-                'rounded-full px-4 py-1.5 text-sm font-medium transition',
-                category === c ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
-              )}
-            >
-              {c || 'All'}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {categories.length > 1 ? (
+          <div className="flex flex-wrap gap-2">
+            {['', ...categories].map((c) => (
+              <button
+                key={c || 'all'}
+                type="button"
+                onClick={() => setCategory(c)}
+                className={clsx(
+                  'rounded-full px-4 py-1.5 text-sm font-medium transition',
+                  category === c ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+                )}
+              >
+                {c || 'All'}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <span />
+        )}
+        <label className="relative block sm:w-64">
+          <span className="sr-only">Search photos</span>
+          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-slate-400" />
+          <input
+            className="input h-10 pl-10 text-sm"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search photos..."
+          />
+        </label>
+      </div>
 
       {visible.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-          No photos to show yet.
+          {query || category ? 'No photos match your search.' : 'No photos to show yet.'}
         </p>
       ) : (
         <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
@@ -67,7 +91,14 @@ export function GalleryGrid({ photos, categories }: { photos: Photo[]; categorie
               onClick={() => setActive(i)}
               className="group relative mb-4 block w-full overflow-hidden rounded-2xl break-inside-avoid"
             >
-              <img src={photo.url} alt={photo.title} loading="lazy" className="w-full transition duration-300 group-hover:scale-105" />
+              <Image
+                src={photo.url}
+                alt={photo.title}
+                width={800}
+                height={600}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="h-auto w-full transition duration-300 group-hover:scale-105"
+              />
               <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-left text-sm font-medium text-white opacity-0 transition group-hover:opacity-100">
                 {photo.title}
               </span>

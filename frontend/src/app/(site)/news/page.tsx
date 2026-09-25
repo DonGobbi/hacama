@@ -1,5 +1,6 @@
 import { CalendarDays } from 'lucide-react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { PageHero } from '@/components/site/PageHero';
 import { publicApi, safely } from '@/lib/api';
 import { formatDate } from '@/lib/format';
@@ -21,14 +22,16 @@ export default async function NewsPage() {
         <div className="container-page max-w-4xl">
           {articles.length === 0 ? (
             <p className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-              No news yet — check back soon.
+              No news yet. Check back soon.
             </p>
           ) : (
             <div className="space-y-6">
               {articles.map((article) => (
                 <article key={article._id} className="card overflow-hidden">
                   {article.imageUrl && (
-                    <img src={article.imageUrl} alt="" className="aspect-[21/9] w-full object-cover" />
+                    <div className="relative aspect-[21/9] w-full">
+                      <Image src={article.imageUrl} alt="" fill sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
+                    </div>
                   )}
                   <div className="p-6 sm:p-8">
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">

@@ -15,7 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(',');
   app.enableCors({
-    // Allow configured origins plus any localhost/127.0.0.1 origin (any port) —
+    // Allow configured origins plus any localhost/127.0.0.1 origin (any port) -
     // needed for local dev tools that proxy the site (e.g. browser previews).
     origin: (origin, cb) => {
       const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin ?? '');

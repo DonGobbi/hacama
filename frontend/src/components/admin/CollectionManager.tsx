@@ -173,7 +173,7 @@ export function CollectionManager<T extends BaseItem>({
         ))}
 
         <label className="block">
-          <span className="label">{imageLabel} (JPEG, PNG, WebP — max 5 MB)</span>
+          <span className="label">{imageLabel} (JPEG, PNG, WebP - max 5 MB)</span>
           <input
             type="file"
             name="image"

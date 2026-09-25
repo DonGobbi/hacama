@@ -42,7 +42,7 @@ export function Header() {
   const track = (href: string) => {
     const i = href.indexOf('#');
     setHash(i >= 0 ? href.slice(i) : '');
-    // Clicking the link for the page you're already on is a no-op in Next —
+    // Clicking the link for the page you're already on is a no-op in Next -
     // force a refetch so freshly published content shows up.
     if (href === pathname) router.refresh();
   };

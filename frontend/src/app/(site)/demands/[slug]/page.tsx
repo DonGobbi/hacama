@@ -1,5 +1,6 @@
 import { ArrowLeft, CalendarDays, CheckCircle2, MapPin, Package, Phone, Tag } from 'lucide-react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
@@ -96,17 +97,20 @@ export default async function DemandDetailsPage({ params }: Props) {
         <div className="container-page grid gap-10 lg:grid-cols-[1fr_380px]">
           <article className="space-y-8">
             {demand.imageUrl && (
-              <img
+              <Image
                 src={demand.imageUrl}
                 alt={demand.title}
-                className="w-full rounded-2xl border border-slate-200 object-cover"
+                width={1200}
+                height={675}
+                sizes="(max-width: 1024px) 100vw, 700px"
+                className="h-auto w-full rounded-2xl border border-slate-200 object-cover"
               />
             )}
             {demand.details ? (
               <div className="whitespace-pre-line leading-relaxed text-slate-600">{demand.details}</div>
             ) : (
               <p className="leading-relaxed text-slate-600">
-                Hacama Investments is buying {demand.title} — {demand.quantity}
+                Hacama Investments is buying {demand.title}, {demand.quantity}
                 {demand.location ? ` in ${demand.location}` : ''}. Reach out using the contact details to make an offer.
               </p>
             )}
@@ -130,7 +134,7 @@ export default async function DemandDetailsPage({ params }: Props) {
               <div className="card p-6 sm:p-8">
                 <h3 className="text-lg font-semibold text-ink-950">Can you supply this?</h3>
                 <p className="mt-2 text-sm text-slate-600">
-                  Send us your offer — quantity available, price, and delivery location.
+                  Send us your offer: quantity available, price, and delivery location.
                 </p>
                 {wa && (
                   <a

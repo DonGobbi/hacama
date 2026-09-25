@@ -99,7 +99,7 @@ export default function AdminJobsPage() {
                 <td className="px-4 py-3">
                   <StatusBadge value={job.status} />
                 </td>
-                <td className="px-4 py-3 text-slate-600">{formatDate(job.deadline) || '—'}</td>
+                <td className="px-4 py-3 text-slate-600">{formatDate(job.deadline) || '-'}</td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
                     {job.status === 'open' && (

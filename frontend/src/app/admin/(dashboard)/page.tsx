@@ -219,7 +219,7 @@ export default function DashboardPage() {
               {!data
                 ? 'Loading the latest activity across the site...'
                 : newEnquiries + newApplications === 0
-                  ? 'You are all caught up — no new enquiries or applications waiting.'
+                  ? 'You are all caught up - no new enquiries or applications waiting.'
                   : `You have ${newEnquiries} new enquir${newEnquiries === 1 ? 'y' : 'ies'} and ${newApplications} new application${newApplications === 1 ? '' : 's'} waiting.`}
             </p>
           </div>
@@ -297,7 +297,7 @@ export default function DashboardPage() {
                     <span className="text-xs font-bold text-slate-300">{String(i + 1).padStart(2, '0')}</span>
                   </span>
                   <span className="mt-1 block text-2xl font-bold tracking-tight text-ink-950">
-                    {data ? countByStatus(step.status) : '–'}
+                    {data ? countByStatus(step.status) : '-'}
                   </span>
                   <span className="block text-xs text-slate-500">{step.hint}</span>
                 </span>
@@ -382,7 +382,7 @@ export default function DashboardPage() {
               <div className="flex items-baseline justify-between text-sm">
                 <span className="text-slate-600">Sections live on the site</span>
                 <span className="font-semibold text-ink-950">
-                  {data ? `${liveSections} / ${content.length}` : '–'}
+                  {data ? `${liveSections} / ${content.length}` : '-'}
                 </span>
               </div>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">

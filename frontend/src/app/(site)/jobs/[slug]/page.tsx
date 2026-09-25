@@ -81,7 +81,7 @@ export default async function JobDetailsPage({ params }: Props) {
                 {closed
                   ? `Applications closed ${formatDate(job.deadline)}`
                   : closingSoon
-                    ? `Closing soon — ${formatDate(job.deadline)}`
+                    ? `Closing soon · ${formatDate(job.deadline)}`
                     : `Apply by ${formatDate(job.deadline)}`}
               </span>
             )}

@@ -16,11 +16,11 @@ export class MailService {
     if (apiKey) {
       this.resend = new Resend(apiKey);
     } else {
-      this.logger.warn('RESEND_API_KEY not set — email notifications are disabled');
+      this.logger.warn('RESEND_API_KEY not set - email notifications are disabled');
     }
   }
 
-  /** Fire-and-forget admin notification. Never throws — mail failure must not break requests. */
+  /** Fire-and-forget admin notification. Never throws - mail failure must not break requests. */
   notifyAdmin(subject: string, html: string): void {
     if (!this.resend || !this.notifyTo) return;
     this.resend.emails
@@ -33,14 +33,14 @@ export class MailService {
 
   notifyApplication(details: { jobTitle: string; fullName: string; email: string; phone: string }): void {
     this.notifyAdmin(
-      `New application: ${details.fullName} — ${details.jobTitle}`,
+      `New application: ${details.fullName} - ${details.jobTitle}`,
       this.wrap(
         'New job application',
         `
         <tr><td style="${this.tdLabel}">Position</td><td style="${this.tdValue}">${this.esc(details.jobTitle)}</td></tr>
         <tr><td style="${this.tdLabel}">Name</td><td style="${this.tdValue}">${this.esc(details.fullName)}</td></tr>
         <tr><td style="${this.tdLabel}">Email</td><td style="${this.tdValue}"><a href="mailto:${this.esc(details.email)}">${this.esc(details.email)}</a></td></tr>
-        <tr><td style="${this.tdLabel}">Phone</td><td style="${this.tdValue}">${this.esc(details.phone || '—')}</td></tr>
+        <tr><td style="${this.tdLabel}">Phone</td><td style="${this.tdValue}">${this.esc(details.phone || '-')}</td></tr>
         `,
         'Open the admin dashboard to review the cover letter and CV.',
       ),
@@ -62,10 +62,10 @@ export class MailService {
         `New ${kind.toLowerCase()}`,
         `
         <tr><td style="${this.tdLabel}">Name</td><td style="${this.tdValue}">${this.esc(details.name)}</td></tr>
-        <tr><td style="${this.tdLabel}">Organization</td><td style="${this.tdValue}">${this.esc(details.organization || '—')}</td></tr>
+        <tr><td style="${this.tdLabel}">Organization</td><td style="${this.tdValue}">${this.esc(details.organization || '-')}</td></tr>
         <tr><td style="${this.tdLabel}">Email</td><td style="${this.tdValue}"><a href="mailto:${this.esc(details.email)}">${this.esc(details.email)}</a></td></tr>
-        <tr><td style="${this.tdLabel}">Phone</td><td style="${this.tdValue}">${this.esc(details.phone || '—')}</td></tr>
-        <tr><td style="${this.tdLabel}">Message</td><td style="${this.tdValue}">${this.esc(details.message || '—')}</td></tr>
+        <tr><td style="${this.tdLabel}">Phone</td><td style="${this.tdValue}">${this.esc(details.phone || '-')}</td></tr>
+        <tr><td style="${this.tdLabel}">Message</td><td style="${this.tdValue}">${this.esc(details.message || '-')}</td></tr>
         `,
         'Open the admin dashboard to respond.',
       ),

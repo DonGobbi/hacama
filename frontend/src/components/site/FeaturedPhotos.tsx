@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import type { Photo } from '@/lib/types';
 
@@ -17,7 +18,7 @@ interface Slot {
 
 /**
  * Shows 3 photos and periodically swaps one slot for a random photo that
- * isn't currently visible — the incoming image crossfades in over the old one.
+ * isn't currently visible - the incoming image crossfades in over the old one.
  */
 export function FeaturedPhotos({ photos }: { photos: Photo[] }) {
   const [slots, setSlots] = useState<Slot[]>(() =>
@@ -83,24 +84,28 @@ export function FeaturedPhotos({ photos }: { photos: Photo[] }) {
             className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100 shadow-sm ring-1 ring-ink-950/5"
           >
             {leaving && (
-              <img
+              <Image
                 src={leaving.url}
                 alt={leaving.title}
+                fill
+                sizes="(max-width: 640px) 33vw, 400px"
+                unoptimized
                 className="animate-photo-out absolute inset-0 h-full w-full object-cover"
                 aria-hidden
               />
             )}
             {/* Wrapper plays the dissolve; the img inside plays the Ken Burns
-                drift — separate elements so the two transforms don't fight. */}
+                drift - separate elements so the two transforms don't fight. */}
             <div
               key={current._id}
               className="animate-photo-in absolute inset-0"
               style={{ animationDelay: `${i * 140}ms` }}
             >
-              <img
+              <Image
                 src={current.url}
                 alt={current.title}
-                loading="lazy"
+                fill
+                sizes="(max-width: 640px) 33vw, 400px"
                 className={clsx('h-full w-full object-cover', slot.kb ? 'animate-ken-burns' : 'animate-ken-burns-alt')}
               />
               {current.title && (

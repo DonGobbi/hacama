@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import type { Testimonial } from '@/lib/types';
 
@@ -50,7 +51,7 @@ function Slide({ t, className, animate }: { t: Testimonial; className?: string; 
       </blockquote>
       <figcaption className={clsx('mt-8 flex items-center gap-3', animate && 'animate-fade-up [animation-delay:240ms]')}>
         {t.imageUrl ? (
-          <img src={t.imageUrl} alt="" className="size-12 rounded-full object-cover ring-2 ring-white" />
+          <Image src={t.imageUrl} alt="" width={48} height={48} className="size-12 rounded-full object-cover ring-2 ring-white" />
         ) : (
           <span className="grid size-12 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 ring-2 ring-white">
             {initials(t.name)}
@@ -120,7 +121,7 @@ export function TestimonialCarousel({ testimonials }: { testimonials: Testimonia
         <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-24 size-64 rounded-full bg-brand-50 blur-3xl" />
 
         {/* All slides stay mounted in the same grid cell so the panel height
-            always equals the tallest quote — no layout shift on rotation. */}
+            always equals the tallest quote - no layout shift on rotation. */}
         <div className="relative grid" aria-live="polite">
           {testimonials.map((t, i) => {
             const isCurrent = i === index;

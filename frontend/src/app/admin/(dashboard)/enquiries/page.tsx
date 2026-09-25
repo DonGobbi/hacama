@@ -168,7 +168,7 @@ function EnquiriesView() {
                     {selected.items.map((item, i) => (
                       <tr key={i}>
                         <td className="px-3 py-2 text-slate-700">{item.description}</td>
-                        <td className="px-3 py-2 whitespace-nowrap text-slate-700">{item.quantity || '—'}</td>
+                        <td className="px-3 py-2 whitespace-nowrap text-slate-700">{item.quantity || '-'}</td>
                       </tr>
                     ))}
                   </tbody>

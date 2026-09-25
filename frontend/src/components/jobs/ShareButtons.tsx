@@ -9,7 +9,7 @@ export function ShareButtons({ title }: { title: string }) {
   useEffect(() => setUrl(window.location.href), []);
   if (!url) return null;
 
-  const text = encodeURIComponent(`${title} — Hacama Investments`);
+  const text = encodeURIComponent(`${title} | Hacama Investments`);
   const encoded = encodeURIComponent(url);
 
   const links = [

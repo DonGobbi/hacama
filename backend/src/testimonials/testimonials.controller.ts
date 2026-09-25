@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGua
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { optionalImage } from '../common/uploads';
-import { CreateTestimonialDto, UpdateTestimonialDto } from './testimonials.dto';
+import { CreateTestimonialDto, SubmitTestimonialDto, UpdateTestimonialDto } from './testimonials.dto';
 import { TestimonialsService } from './testimonials.service';
 
 @Controller('testimonials')
@@ -18,6 +18,12 @@ export class TestimonialsController {
   @UseGuards(JwtAuthGuard)
   findAll() {
     return this.testimonialsService.findAll();
+  }
+
+  /** Public "share your experience" submissions: saved unpublished for admin review. */
+  @Post('submit')
+  submit(@Body() dto: SubmitTestimonialDto) {
+    return this.testimonialsService.submit(dto);
   }
 
   @Post()

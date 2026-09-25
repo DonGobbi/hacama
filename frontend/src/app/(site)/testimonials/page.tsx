@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { Quote } from 'lucide-react';
 import { PageHero } from '@/components/site/PageHero';
+import { SubmitTestimonialForm } from '@/components/site/SubmitTestimonialForm';
 import { publicApi, safely } from '@/lib/api';
 
 export const metadata: Metadata = { title: 'Testimonials' };
@@ -37,7 +39,7 @@ export default async function TestimonialsPage() {
                   <blockquote className="mt-4 flex-1 whitespace-pre-line text-slate-700">{t.quote}</blockquote>
                   <figcaption className="mt-6 flex items-center gap-3">
                     {t.imageUrl ? (
-                      <img src={t.imageUrl} alt="" loading="lazy" className="size-10 rounded-full object-cover" />
+                      <Image src={t.imageUrl} alt="" width={40} height={40} className="size-10 rounded-full object-cover" />
                     ) : (
                       <span className="grid size-10 place-items-center rounded-full bg-brand-50 text-sm font-semibold text-brand-600">
                         {initials(t.name)}
@@ -56,6 +58,7 @@ export default async function TestimonialsPage() {
               ))}
             </div>
           )}
+          <SubmitTestimonialForm />
         </div>
       </section>
     </>

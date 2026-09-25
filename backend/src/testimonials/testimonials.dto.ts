@@ -42,3 +42,31 @@ export class UpdateTestimonialDto extends PartialType(CreateTestimonialDto) {
   @IsBoolean()
   removeImage?: boolean;
 }
+
+/** Public submission: no published/order control, plus a honeypot field. */
+export class SubmitTestimonialDto {
+  @IsString()
+  @MinLength(10)
+  @MaxLength(1000)
+  quote: string;
+
+  @IsString()
+  @MinLength(2)
+  @MaxLength(120)
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  organization?: string;
+
+  /** Honeypot: bots fill this hidden field; humans never see it. */
+  @IsOptional()
+  @IsString()
+  website?: string;
+}

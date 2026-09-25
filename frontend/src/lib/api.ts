@@ -19,7 +19,9 @@ import type {
   Project,
   SettingsInput,
   SiteSettings,
+  Subscriber,
   Testimonial,
+  TestimonialInput,
   UserRole,
 } from './types';
 
@@ -104,6 +106,10 @@ export const publicApi = {
   demandBySlug: (slug: string) => request<Demand>(`/demands/slug/${encodeURIComponent(slug)}`, { cache: 'no-store' }),
   submitEnquiry: (data: EnquiryInput) =>
     request<{ id?: string; submitted: boolean }>('/enquiries', { method: 'POST', body: data }),
+  submitTestimonial: (data: TestimonialInput) =>
+    request<{ submitted: boolean }>('/testimonials/submit', { method: 'POST', body: data }),
+  subscribe: (data: { email: string; website?: string }) =>
+    request<{ subscribed: boolean; already?: boolean }>('/subscribers', { method: 'POST', body: data }),
   login: (email: string, password: string) =>
     request<LoginResponse>('/auth/login', { method: 'POST', body: { email, password } }),
   forgotPassword: (email: string) =>
@@ -152,6 +158,8 @@ export const adminApi = {
   deleteApplication: (id: string) => authed<{ deleted: boolean }>(`/applications/${id}`, { method: 'DELETE' }),
 
   enquiries: (params: { type?: string; status?: string } = {}) => authed<Enquiry[]>(`/enquiries${toQuery(params)}`),
+  subscribers: () => authed<Subscriber[]>('/subscribers/admin'),
+  deleteSubscriber: (id: string) => authed<{ deleted: boolean }>(`/subscribers/${id}`, { method: 'DELETE' }),
   updateEnquiry: (id: string, data: { status?: EnquiryStatus; notes?: string }) =>
     authed<Enquiry>(`/enquiries/${id}`, { method: 'PATCH', body: data }),
   deleteEnquiry: (id: string) => authed<{ deleted: boolean }>(`/enquiries/${id}`, { method: 'DELETE' }),

@@ -110,7 +110,7 @@ export default function AccountPage() {
 
       <section className="card mt-6 p-6 sm:p-8">
         <h2 className="text-lg font-semibold text-ink-950">Change password</h2>
-        <p className="mt-1 text-sm text-slate-500">Use a strong password — at least 8 characters.</p>
+        <p className="mt-1 text-sm text-slate-500">Use a strong password - at least 8 characters.</p>
         <form onSubmit={savePassword} className="mt-5 space-y-4">
           <label className="block">
             <span className="label">Current password</span>

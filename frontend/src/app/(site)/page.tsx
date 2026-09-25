@@ -204,11 +204,12 @@ export default async function HomePage() {
             <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
               {partners.map((partner) => {
                 const content = partner.imageUrl ? (
-                  <img
+                  <Image
                     src={partner.imageUrl}
                     alt={partner.name}
                     title={partner.name}
-                    loading="lazy"
+                    width={160}
+                    height={48}
                     className="h-12 w-auto max-w-40 object-contain opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
                   />
                 ) : (
@@ -385,10 +386,11 @@ export default async function HomePage() {
               {projects.map((project) => (
                 <article key={project._id} className="card overflow-hidden">
                   {project.imageUrl && (
-                    <img
+                    <Image
                       src={project.imageUrl}
                       alt={project.title}
-                      loading="lazy"
+                      width={800}
+                      height={500}
                       className="aspect-[16/10] w-full object-cover"
                     />
                   )}

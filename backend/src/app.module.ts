@@ -15,6 +15,7 @@ import { PhotosModule } from './photos/photos.module';
 import { ProjectsModule } from './projects/projects.module';
 import { SettingsModule } from './settings/settings.module';
 import { StorageModule } from './storage/storage.module';
+import { SubscribersModule } from './subscribers/subscribers.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { UsersModule } from './users/users.module';
 
@@ -39,6 +40,7 @@ import { UsersModule } from './users/users.module';
     PhotosModule,
     EnquiriesModule,
     TestimonialsModule,
+    SubscribersModule,
     PartnersModule,
     ProjectsModule,
     SettingsModule,

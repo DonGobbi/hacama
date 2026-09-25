@@ -3,7 +3,7 @@ import { DemandCard } from '@/components/demands/DemandCard';
 import { PageHero } from '@/components/site/PageHero';
 import { publicApi, safely } from '@/lib/api';
 
-export const metadata: Metadata = { title: 'We Buy — Market Demands' };
+export const metadata: Metadata = { title: 'We Buy: Market Demands' };
 
 export default async function DemandsPage() {
   const demands = await safely(publicApi.demands(), []);
@@ -14,7 +14,7 @@ export default async function DemandsPage() {
       <PageHero
         tag="We Buy"
         title="Commodities we're sourcing"
-        text="Hacama Investments is actively buying the commodities below. If you can supply, open a demand and get in touch — we move fast on genuine offers."
+        text="Hacama Investments is actively buying the commodities below. If you can supply, open a demand and get in touch. We move fast on genuine offers."
       />
 
       <section className="py-12">
@@ -32,7 +32,7 @@ export default async function DemandsPage() {
             </div>
           ) : (
             <p className="mt-4 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-              No active demands right now — check back soon or contact us with your offer.
+              No active demands right now. Check back soon or contact us with your offer.
             </p>
           )}
         </div>

@@ -31,8 +31,8 @@ export default function ActivityPage() {
         title="Activity logs"
         description={
           user.role === 'superadmin'
-            ? 'Sign-in history for every admin account — device, IP, and location.'
-            : 'Sign-in history for your account — device, IP, and location.'
+            ? 'Sign-in history for every admin account - device, IP, and location.'
+            : 'Sign-in history for your account - device, IP, and location.'
         }
       />
       <ErrorNote message={error} />

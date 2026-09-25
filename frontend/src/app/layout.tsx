@@ -6,7 +6,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 const DESCRIPTION =
-  'Hacama Investments is a diversified investment, procurement, and supply company in Lilongwe, Malawi — serving institutions, businesses, organizations, farmers, and communities.';
+  'Hacama Investments is a diversified investment, procurement, and supply company in Lilongwe, Malawi, serving institutions, businesses, organizations, farmers, and communities.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

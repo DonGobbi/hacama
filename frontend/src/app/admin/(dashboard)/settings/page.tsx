@@ -202,7 +202,7 @@ export default function AdminSettingsPage() {
               className="input"
               value={settings.officeHours}
               maxLength={120}
-              placeholder="e.g. Mon – Fri, 8:00 – 17:00"
+              placeholder="e.g. Mon - Fri, 8:00 - 17:00"
               onChange={(e) => set('officeHours', e.target.value)}
             />
           </label>
@@ -212,7 +212,7 @@ export default function AdminSettingsPage() {
               className="input"
               value={settings.address}
               maxLength={300}
-              placeholder="Street, area, Lilongwe — a map is shown on the website when this is filled in"
+              placeholder="Street, area, Lilongwe - a map is shown on the website when this is filled in"
               onChange={(e) => set('address', e.target.value)}
             />
           </label>

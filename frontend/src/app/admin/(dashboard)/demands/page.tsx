@@ -8,9 +8,9 @@ export default function AdminDemandsPage() {
     <CollectionManager<Demand>
       kind="demands"
       title="Market Demands"
-      description="Commodities Hacama is looking to buy — shown on the We Buy page once visible. Mark as fulfilled when the deal is done."
+      description="Commodities Hacama is looking to buy - shown on the We Buy page once visible. Mark as fulfilled when the deal is done."
       singular="demand"
-      imageLabel="Photo (optional — e.g. the commodity)"
+      imageLabel="Photo (optional - e.g. the commodity)"
       fields={[
         {
           name: 'title',
@@ -46,13 +46,13 @@ export default function AdminDemandsPage() {
           type: 'select',
           required: true,
           options: [
-            { value: 'open', label: 'Open — still buying' },
-            { value: 'fulfilled', label: 'Fulfilled — deal done' },
+            { value: 'open', label: 'Open - still buying' },
+            { value: 'fulfilled', label: 'Fulfilled - deal done' },
           ],
         },
         {
           name: 'contact',
-          label: 'Contact for suppliers (optional — defaults to site phone/WhatsApp)',
+          label: 'Contact for suppliers (optional - defaults to site phone/WhatsApp)',
           maxLength: 300,
           wide: true,
           placeholder: 'e.g. WhatsApp or call 0997 20 07 00, or visit Bingu National Stadium Corporate Box E19',
