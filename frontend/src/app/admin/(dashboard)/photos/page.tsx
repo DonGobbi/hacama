@@ -1,9 +1,9 @@
 'use client';
 
 import clsx from 'clsx';
-import { Loader2, Pencil, Star, Trash2, Upload } from 'lucide-react';
+import { Images, Loader2, Pencil, Star, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
+import { EmptyState, ErrorNote, LoadingNote, PageHeader } from '@/components/admin/AdminShell';
 import { adminApi } from '@/lib/api';
 import { formatBytes } from '@/lib/format';
 import type { Photo } from '@/lib/types';
@@ -121,8 +121,10 @@ export default function AdminPhotosPage() {
         </div>
       </form>
 
-      {photos === null && !error && <p className="text-sm text-slate-400">Loading...</p>}
-      {photos?.length === 0 && <p className="text-sm text-slate-500">No photos uploaded yet.</p>}
+      {photos === null && !error && <LoadingNote />}
+      {photos?.length === 0 && (
+        <EmptyState icon={Images} message="No photos uploaded yet." hint="Upload photos above - featured ones appear on the website." />
+      )}
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {photos?.map((photo) => (

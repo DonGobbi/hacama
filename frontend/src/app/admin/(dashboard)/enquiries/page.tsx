@@ -1,9 +1,9 @@
 'use client';
 
-import { Calendar, Mail, MapPin, MessageCircle, Phone, Tag, Trash2 } from 'lucide-react';
+import { Calendar, Inbox, Mail, MapPin, MessageCircle, Phone, Tag, Trash2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import { ErrorNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
+import { EmptyState, ErrorNote, LoadingNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
 import { adminApi } from '@/lib/api';
 import { whatsappLink } from '@/lib/company';
 import { formatDate, titleCase } from '@/lib/format';
@@ -78,8 +78,10 @@ function EnquiriesView() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
         <div className="card divide-y divide-slate-100 self-start">
-          {items === null && !error && <p className="p-6 text-sm text-slate-400">Loading...</p>}
-          {items?.length === 0 && <p className="p-6 text-sm text-slate-500">No enquiries found.</p>}
+          {items === null && !error && <LoadingNote />}
+          {items?.length === 0 && (
+            <EmptyState icon={Inbox} message="No enquiries found." hint="Contact and quote requests submitted on the website appear here." />
+          )}
           {items?.map((e) => (
             <button
               key={e._id}
