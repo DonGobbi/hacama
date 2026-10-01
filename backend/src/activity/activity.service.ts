@@ -79,16 +79,17 @@ export class ActivityService {
    * window so refreshes don't flood the log.
    */
   async logVisit(ip: string, userAgent: string, path: string) {
+    const device = parseDevice(userAgent);
     const windowStart = new Date(Date.now() - 30 * 60 * 1000);
     const recent = await this.visitModel
-      .findOne({ ip, createdAt: { $gt: windowStart } })
+      .findOne({ ip, device, createdAt: { $gt: windowStart } })
       .select('_id')
       .lean();
     if (recent) return null;
 
     const entry = await this.visitModel.create({
       ip,
-      device: parseDevice(userAgent),
+      device,
       path: path || '/',
       location: '',
     });
