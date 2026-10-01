@@ -4,6 +4,7 @@ import { ExternalLink, Pencil, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { ErrorNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { formatDate, titleCase } from '@/lib/format';
 import { JOB_STATUSES, type Job } from '@/lib/types';
@@ -13,6 +14,8 @@ export default function AdminJobsPage() {
   const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
+  const [pending, setPending] = useState<Job | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const load = useCallback(() => {
     adminApi
@@ -27,12 +30,15 @@ export default function AdminJobsPage() {
   }, [load]);
 
   async function remove(job: Job) {
-    if (!confirm(`Delete "${job.title}"? This cannot be undone.`)) return;
+    setBusy(true);
     try {
       await adminApi.deleteJob(job._id);
       setJobs((prev) => prev?.filter((j) => j._id !== job._id) ?? null);
+      setPending(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -110,7 +116,7 @@ export default function AdminJobsPage() {
                     <Link href={`/admin/jobs/${job._id}`} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" title="Edit">
                       <Pencil className="size-4" />
                     </Link>
-                    <button type="button" onClick={() => remove(job)} className="rounded-lg p-2 text-red-500 hover:bg-red-50" title="Delete">
+                    <button type="button" onClick={() => setPending(job)} className="rounded-lg p-2 text-red-500 hover:bg-red-50" title="Delete">
                       <Trash2 className="size-4" />
                     </button>
                   </div>
@@ -120,6 +126,15 @@ export default function AdminJobsPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Delete job?"
+        message={pending ? `Delete "${pending.title}"? This cannot be undone.` : ''}
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }

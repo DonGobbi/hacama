@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
 import { useAuth } from '@/components/admin/AuthProvider';
+import { ConfirmDialog, PromptDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import type { AdminUser, UserRole } from '@/lib/types';
@@ -15,6 +16,9 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[] | null>(null);
   const [error, setError] = useState('');
   const [creating, setCreating] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<AdminUser | null>(null);
+  const [pendingReset, setPendingReset] = useState<AdminUser | null>(null);
+  const [busy, setBusy] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -59,23 +63,25 @@ export default function AdminUsersPage() {
     }
   }
 
-  async function resetPassword(user: AdminUser) {
-    const password = prompt(`New password for ${user.email} (min 8 characters):`);
-    if (!password) return;
+  async function submitReset(user: AdminUser, password: string) {
     if (password.length < 8) {
       setError('Password must be at least 8 characters.');
       return;
     }
     await update(user, { password });
+    setPendingReset(null);
   }
 
   async function remove(user: AdminUser) {
-    if (!confirm(`Delete ${user.email}?`)) return;
+    setBusy(true);
     try {
       await adminApi.deleteUser(user._id);
       setUsers((prev) => prev?.filter((u) => u._id !== user._id) ?? null);
+      setPendingDelete(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -152,11 +158,11 @@ export default function AdminUsersPage() {
                   <td className="px-4 py-3 text-slate-600">{formatDate(u.createdAt)}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-1">
-                      <button type="button" onClick={() => resetPassword(u)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" title="Reset password">
+                      <button type="button" onClick={() => setPendingReset(u)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" title="Reset password">
                         <KeyRound className="size-4" />
                       </button>
                       {!isMe && (
-                        <button type="button" onClick={() => remove(u)} className="rounded-lg p-2 text-red-500 hover:bg-red-50" title="Delete">
+                        <button type="button" onClick={() => setPendingDelete(u)} className="rounded-lg p-2 text-red-500 hover:bg-red-50" title="Delete">
                           <Trash2 className="size-4" />
                         </button>
                       )}
@@ -168,6 +174,25 @@ export default function AdminUsersPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Delete user?"
+        message={pendingDelete ? `${pendingDelete.email} will no longer be able to sign in. This cannot be undone.` : ''}
+        busy={busy}
+        onConfirm={() => pendingDelete && remove(pendingDelete)}
+        onCancel={() => setPendingDelete(null)}
+      />
+      <PromptDialog
+        open={pendingReset !== null}
+        title="Reset password"
+        label={`New password for ${pendingReset?.email ?? ''}`}
+        placeholder="Minimum 8 characters"
+        confirmLabel="Set password"
+        busy={busy}
+        onSubmit={(password) => pendingReset && submitReset(pendingReset, password)}
+        onCancel={() => setPendingReset(null)}
+      />
     </>
   );
 }

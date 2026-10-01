@@ -4,6 +4,7 @@ import { Calendar, Inbox, Mail, MapPin, MessageCircle, Phone, Tag, Trash2 } from
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { EmptyState, ErrorNote, LoadingNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { whatsappLink } from '@/lib/company';
 import { formatDate, titleCase } from '@/lib/format';
@@ -18,6 +19,8 @@ function EnquiriesView() {
   const [items, setItems] = useState<Enquiry[] | null>(null);
   const [selected, setSelected] = useState<Enquiry | null>(null);
   const [error, setError] = useState('');
+  const [pending, setPending] = useState<Enquiry | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     setItems(null);
@@ -45,13 +48,16 @@ function EnquiriesView() {
   }
 
   async function remove(enquiry: Enquiry) {
-    if (!confirm(`Delete enquiry from ${enquiry.name}?`)) return;
+    setBusy(true);
     try {
       await adminApi.deleteEnquiry(enquiry._id);
       setItems((prev) => prev?.filter((e) => e._id !== enquiry._id) ?? null);
       setSelected(null);
+      setPending(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -213,7 +219,7 @@ function EnquiriesView() {
                 <textarea className="input" name="notes" rows={4} defaultValue={selected.notes} />
               </label>
               <div className="mt-3 flex justify-between">
-                <button type="button" className="btn btn-danger btn-sm" onClick={() => remove(selected)}>
+                <button type="button" className="btn btn-danger btn-sm" onClick={() => setPending(selected)}>
                   <Trash2 className="size-3.5" /> Delete
                 </button>
                 <button type="submit" className="btn btn-primary btn-sm">
@@ -228,6 +234,15 @@ function EnquiriesView() {
           </p>
         )}
       </div>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Delete enquiry?"
+        message={pending ? `Delete the enquiry from ${pending.name}? This cannot be undone.` : ''}
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }

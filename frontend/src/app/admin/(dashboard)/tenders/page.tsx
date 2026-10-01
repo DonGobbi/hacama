@@ -3,6 +3,7 @@
 import { CalendarClock, CheckCircle2, FileDown, Loader2, Plus, ScrollText, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import type { Tender } from '@/lib/types';
@@ -12,6 +13,8 @@ const emptyForm = { title: '', reference: '', summary: '', description: '', dead
 export default function AdminTendersPage() {
   const [tenders, setTenders] = useState<Tender[] | null>(null);
   const [error, setError] = useState('');
+  const [pending, setPending] = useState<Tender | null>(null);
+  const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [editing, setEditing] = useState<Tender | null>(null);
@@ -92,12 +95,15 @@ export default function AdminTendersPage() {
   }
 
   async function remove(t: Tender) {
-    if (!confirm(`Delete tender "${t.title}"?`)) return;
+    setBusy(true);
     try {
       await adminApi.contentDelete('tenders', t._id);
       await load();
+      setPending(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -249,7 +255,7 @@ export default function AdminTendersPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => remove(t)}
+                    onClick={() => setPending(t)}
                     aria-label="Delete tender"
                     className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
                   >
@@ -261,6 +267,15 @@ export default function AdminTendersPage() {
           ))}
         </ul>
       </section>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Delete tender?"
+        message={pending ? `Delete tender "${pending.title}"? This cannot be undone.` : ''}
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }

@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { Images, Loader2, Pencil, Star, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { EmptyState, ErrorNote, LoadingNote, PageHeader } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { formatBytes } from '@/lib/format';
 import type { Photo } from '@/lib/types';
@@ -12,6 +13,8 @@ export default function AdminPhotosPage() {
   const [photos, setPhotos] = useState<Photo[] | null>(null);
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [pending, setPending] = useState<Photo | null>(null);
+  const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -68,12 +71,15 @@ export default function AdminPhotosPage() {
   }
 
   async function remove(photo: Photo) {
-    if (!confirm(`Delete "${photo.title}"? The file will be removed from storage.`)) return;
+    setBusy(true);
     try {
       await adminApi.deletePhoto(photo._id);
       setPhotos((prev) => prev?.filter((p) => p._id !== photo._id) ?? null);
+      setPending(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -173,7 +179,7 @@ export default function AdminPhotosPage() {
                   <button type="button" onClick={() => setEditing(photo._id)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" title="Edit">
                     <Pencil className="size-4" />
                   </button>
-                  <button type="button" onClick={() => remove(photo)} className="rounded-lg p-2 text-red-500 hover:bg-red-50" title="Delete">
+                  <button type="button" onClick={() => setPending(photo)} className="rounded-lg p-2 text-red-500 hover:bg-red-50" title="Delete">
                     <Trash2 className="size-4" />
                   </button>
                 </div>
@@ -182,6 +188,15 @@ export default function AdminPhotosPage() {
           </div>
         ))}
       </div>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Delete photo?"
+        message={pending ? `Delete "${pending.title}"? The file will be removed from storage.` : ''}
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }

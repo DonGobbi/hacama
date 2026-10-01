@@ -3,6 +3,7 @@
 import { CheckCircle2, Factory, Mail, MapPin, Phone, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ErrorNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import type { Supplier, SupplierStatus } from '@/lib/types';
@@ -12,6 +13,8 @@ const STATUSES: SupplierStatus[] = ['new', 'contacted', 'approved', 'rejected'];
 export default function AdminSuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[] | null>(null);
   const [error, setError] = useState('');
+  const [pending, setPending] = useState<Supplier | null>(null);
+  const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
 
   const load = () =>
@@ -34,13 +37,16 @@ export default function AdminSuppliersPage() {
   }
 
   async function remove(s: Supplier) {
-    if (!confirm(`Delete supplier "${s.companyName}"?`)) return;
+    setBusy(true);
     try {
       await adminApi.deleteSupplier(s._id);
       setSuppliers((prev) => prev?.filter((x) => x._id !== s._id) ?? prev);
       setNotice('Supplier removed.');
+      setPending(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -134,7 +140,7 @@ export default function AdminSuppliersPage() {
                 </select>
                 <button
                   type="button"
-                  onClick={() => remove(s)}
+                  onClick={() => setPending(s)}
                   aria-label="Delete supplier"
                   className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
                 >
@@ -145,6 +151,15 @@ export default function AdminSuppliersPage() {
           </li>
         ))}
       </ul>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Delete supplier?"
+        message={pending ? `Delete supplier "${pending.companyName}"? This cannot be undone.` : ''}
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }
