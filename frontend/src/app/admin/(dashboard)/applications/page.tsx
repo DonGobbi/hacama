@@ -4,6 +4,7 @@ import { Download, FileText, Mail, Phone, Trash2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { EmptyState, ErrorNote, LoadingNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { formatDate, titleCase } from '@/lib/format';
 import { APPLICATION_STATUSES, type Application, type ApplicationStatus, type Job } from '@/lib/types';
@@ -18,6 +19,8 @@ function ApplicationsView() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [selected, setSelected] = useState<Application | null>(null);
   const [error, setError] = useState('');
+  const [pending, setPending] = useState<Application | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     adminApi.jobs().then(setJobs).catch(() => {});
@@ -49,13 +52,16 @@ function ApplicationsView() {
   }
 
   async function remove(app: Application) {
-    if (!confirm(`Delete application from ${app.fullName}?`)) return;
+    setBusy(true);
     try {
       await adminApi.deleteApplication(app._id);
       setItems((prev) => prev?.filter((a) => a._id !== app._id) ?? null);
       setSelected(null);
+      setPending(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -163,7 +169,7 @@ function ApplicationsView() {
                 <textarea className="input" name="notes" rows={4} defaultValue={selected.notes} />
               </label>
               <div className="mt-3 flex justify-between">
-                <button type="button" className="btn btn-danger btn-sm" onClick={() => remove(selected)}>
+                <button type="button" className="btn btn-danger btn-sm" onClick={() => setPending(selected)}>
                   <Trash2 className="size-3.5" /> Delete
                 </button>
                 <button type="submit" className="btn btn-primary btn-sm">
@@ -178,6 +184,15 @@ function ApplicationsView() {
           </p>
         )}
       </div>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Delete application?"
+        message={pending ? `Delete the application from ${pending.fullName}? This cannot be undone.` : ''}
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }

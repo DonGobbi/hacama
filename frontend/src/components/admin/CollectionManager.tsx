@@ -5,6 +5,7 @@ import { Eye, EyeOff, Loader2, Pencil, Plus, Save, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import type { ContentKind } from '@/lib/types';
 
@@ -55,6 +56,8 @@ export function CollectionManager<T extends BaseItem>({
   const [editing, setEditing] = useState<T | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [pending, setPending] = useState<T | null>(null);
+  const [busy, setBusy] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -105,14 +108,17 @@ export function CollectionManager<T extends BaseItem>({
   }
 
   async function remove(item: T) {
-    if (!confirm(`Delete "${primary(item)}"?`)) return;
+    setBusy(true);
     try {
       await adminApi.contentDelete(kind, item._id);
       setItems((prev) => prev?.filter((i) => i._id !== item._id) ?? null);
       if (editing?._id === item._id) setEditing(null);
+      setPending(null);
       router.refresh();
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -280,7 +286,7 @@ export function CollectionManager<T extends BaseItem>({
                   </button>
                   <button
                     type="button"
-                    onClick={() => remove(item)}
+                    onClick={() => setPending(item)}
                     className="rounded-lg p-2 text-red-500 hover:bg-red-50"
                     title="Delete"
                   >
@@ -292,6 +298,15 @@ export function CollectionManager<T extends BaseItem>({
           </div>
         ))}
       </div>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title={`Delete ${singular}?`}
+        message={pending ? `Delete "${primary(pending)}"? This cannot be undone.` : ''}
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }

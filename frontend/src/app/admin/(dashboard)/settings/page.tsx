@@ -3,6 +3,7 @@
 import { CheckCircle2, FileText, Loader2, Plus, Save, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import type { Credential, Faq, SiteSettings, Stat } from '@/lib/types';
 
@@ -93,6 +94,8 @@ export default function AdminSettingsPage() {
   const [notice, setNotice] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -170,12 +173,15 @@ export default function AdminSettingsPage() {
   }
 
   async function removeProfile() {
-    if (!confirm('Remove the company profile PDF from the website?')) return;
+    setRemoving(true);
     try {
       setSettings(applySettings(await adminApi.removeCompanyProfile()));
       setNotice('Company profile removed.');
+      setConfirmRemove(false);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setRemoving(false);
     }
   }
 
@@ -350,7 +356,7 @@ export default function AdminSettingsPage() {
             >
               <FileText className="size-4" /> View current company profile
             </a>
-            <button type="button" className="btn btn-danger btn-sm" onClick={removeProfile}>
+            <button type="button" className="btn btn-danger btn-sm" onClick={() => setConfirmRemove(true)}>
               <Trash2 className="size-3.5" /> Remove
             </button>
           </div>
@@ -368,6 +374,16 @@ export default function AdminSettingsPage() {
           </button>
         </div>
       </section>
+
+      <ConfirmDialog
+        open={confirmRemove}
+        title="Remove company profile?"
+        message="Remove the company profile PDF from the website?"
+        confirmLabel="Remove"
+        busy={removing}
+        onConfirm={removeProfile}
+        onCancel={() => setConfirmRemove(false)}
+      />
     </>
   );
 }

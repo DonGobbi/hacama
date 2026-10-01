@@ -3,6 +3,7 @@
 import { Loader2, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import type { Subscriber } from '@/lib/types';
@@ -10,6 +11,8 @@ import type { Subscriber } from '@/lib/types';
 export default function AdminSubscribersPage() {
   const [items, setItems] = useState<Subscriber[] | null>(null);
   const [error, setError] = useState('');
+  const [pending, setPending] = useState<Subscriber | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     adminApi
@@ -19,12 +22,15 @@ export default function AdminSubscribersPage() {
   }, []);
 
   async function remove(sub: Subscriber) {
-    if (!confirm(`Remove ${sub.email} from the list?`)) return;
+    setBusy(true);
     try {
       await adminApi.deleteSubscriber(sub._id);
       setItems((prev) => prev?.filter((s) => s._id !== sub._id) ?? null);
+      setPending(null);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -68,7 +74,7 @@ export default function AdminSubscribersPage() {
                   <td className="px-4 py-3 text-right">
                     <button
                       type="button"
-                      onClick={() => remove(sub)}
+                      onClick={() => setPending(sub)}
                       className="rounded-lg p-2 text-red-500 hover:bg-red-50"
                       title="Remove subscriber"
                     >
@@ -84,6 +90,16 @@ export default function AdminSubscribersPage() {
           </p>
         </div>
       )}
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Remove subscriber?"
+        message={pending ? `Remove ${pending.email} from the list?` : ''}
+        confirmLabel="Remove"
+        busy={busy}
+        onConfirm={() => pending && remove(pending)}
+        onCancel={() => setPending(null)}
+      />
     </>
   );
 }
