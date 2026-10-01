@@ -82,12 +82,13 @@ function EnquiriesView() {
           {items?.length === 0 && (
             <EmptyState icon={Inbox} message="No enquiries found." hint="Contact and quote requests submitted on the website appear here." />
           )}
-          {items?.map((e) => (
+          {items?.map((e, i) => (
             <button
               key={e._id}
               type="button"
               onClick={() => setSelected(e)}
-              className={`flex w-full flex-wrap items-center justify-between gap-2 px-5 py-3 text-left text-sm hover:bg-slate-50 ${selected?._id === e._id ? 'bg-brand-50' : ''}`}
+              style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
+              className={`flex w-full animate-fade-up flex-wrap items-center justify-between gap-2 px-5 py-3 text-left text-sm hover:bg-slate-50 ${selected?._id === e._id ? 'bg-brand-50' : ''}`}
             >
               <div className="min-w-0">
                 <p className="font-medium text-ink-950">

@@ -127,8 +127,12 @@ export default function AdminPhotosPage() {
       )}
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {photos?.map((photo) => (
-          <div key={photo._id} className="card overflow-hidden">
+        {photos?.map((photo, i) => (
+          <div
+            key={photo._id}
+            className="card animate-fade-up overflow-hidden"
+            style={{ animationDelay: `${Math.min(i * 50, 400)}ms` }}
+          >
             <div className="relative">
               <img src={photo.url} alt={photo.title} className="aspect-[4/3] w-full object-cover" />
               <button
