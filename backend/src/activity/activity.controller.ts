@@ -20,6 +20,12 @@ export class ActivityController {
     return this.activityService.findVisits();
   }
 
+  @Get('visit-stats')
+  @UseGuards(JwtAuthGuard)
+  visitStats() {
+    return this.activityService.visitStats();
+  }
+
   @Post('visit')
   recordVisit(@Ip() ip: string, @Req() req: Request, @Body() body?: { path?: string }) {
     return this.activityService.logVisit(ip, req.headers['user-agent'] ?? '', body?.path ?? '/');

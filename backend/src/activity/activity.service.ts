@@ -124,4 +124,59 @@ export class ActivityService {
   findVisits() {
     return this.visitModel.find().sort({ createdAt: -1 }).limit(200).lean();
   }
+
+  /** Aggregated site-visit stats for the admin dashboard. */
+  async visitStats() {
+    const DAY = 24 * 60 * 60 * 1000;
+    const since = new Date(Date.now() - 13 * DAY);
+    since.setHours(0, 0, 0, 0);
+    const weekStart = new Date(Date.now() - 7 * DAY);
+
+    const [daily, topPages, devices, totals, week] = await Promise.all([
+      this.visitModel.aggregate<{ _id: string; count: number }>([
+        { $match: { createdAt: { $gte: since } } },
+        { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
+      ]),
+      this.visitModel.aggregate<{ _id: string; count: number }>([
+        { $group: { _id: '$path', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 6 },
+      ]),
+      this.visitModel.aggregate<{ _id: string; count: number }>([
+        {
+          $project: {
+            kind: {
+              $cond: [
+                { $regexMatch: { input: '$device', regex: 'Mobile' } },
+                'Mobile',
+                { $cond: [{ $regexMatch: { input: '$device', regex: 'Desktop' } }, 'Desktop', 'Other'] },
+              ],
+            },
+          },
+        },
+        { $group: { _id: '$kind', count: { $sum: 1 } } },
+      ]),
+      this.visitModel.aggregate<{ total: number; uniqueIps: number }>([
+        { $group: { _id: null, total: { $sum: 1 }, ips: { $addToSet: '$ip' } } },
+        { $project: { _id: 0, total: 1, uniqueIps: { $size: '$ips' } } },
+      ]),
+      this.visitModel.countDocuments({ createdAt: { $gte: weekStart } }),
+    ]);
+
+    const byDay = new Map(daily.map((d) => [d._id, d.count]));
+    const days = Array.from({ length: 14 }, (_, i) => {
+      const date = new Date(since.getTime() + i * DAY);
+      const key = date.toISOString().slice(0, 10);
+      return { date: key, count: byDay.get(key) ?? 0 };
+    });
+
+    return {
+      days,
+      topPages: topPages.map((p) => ({ path: p._id || '/', count: p.count })),
+      devices: devices.map((d) => ({ label: d._id, count: d.count })),
+      total: totals[0]?.total ?? 0,
+      uniqueIps: totals[0]?.uniqueIps ?? 0,
+      week,
+    };
+  }
 }

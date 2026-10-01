@@ -96,6 +96,15 @@ export interface SiteVisit {
   createdAt: string;
 }
 
+export interface VisitStats {
+  days: { date: string; count: number }[];
+  topPages: { path: string; count: number }[];
+  devices: { label: string; count: number }[];
+  total: number;
+  uniqueIps: number;
+  week: number;
+}
+
 export interface LoginResponse {
   accessToken: string;
   user: AuthUser;

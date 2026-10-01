@@ -34,6 +34,7 @@ import type {
   Project,
   SiteSettings,
   Testimonial,
+  VisitStats,
 } from '@/lib/types';
 
 type DashboardData = {
@@ -62,6 +63,17 @@ const QUICK_ACTIONS = [
   { label: 'Upload photos', href: '/admin/photos', icon: ImagePlus },
   { label: 'Site settings', href: '/admin/settings', icon: Settings },
 ];
+
+const DEVICE_ORDER = ['Mobile', 'Desktop', 'Other'];
+const DEVICE_COLORS: Record<string, string> = {
+  Mobile: 'bg-brand-500',
+  Desktop: 'bg-ink-800',
+  Other: 'bg-slate-300',
+};
+
+function shortDate(iso: string) {
+  return new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+}
 
 function greeting() {
   const hour = new Date().getHours();
@@ -126,6 +138,7 @@ function Panel({
 export default function DashboardPage() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
+  const [traffic, setTraffic] = useState<VisitStats | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -145,6 +158,10 @@ export default function DashboardPage() {
         setData({ jobs, applications, photos, enquiries, testimonials, partners, projects, news, demands, settings }),
       )
       .catch((err: Error) => setError(err.message));
+    adminApi
+      .visitStats()
+      .then(setTraffic)
+      .catch(() => setTraffic(null));
   }, []);
 
   const newEnquiries = data?.enquiries.filter((e) => e.status === 'new').length ?? 0;
@@ -263,6 +280,101 @@ export default function DashboardPage() {
           ),
         )}
       </div>
+
+      {traffic && traffic.total > 0 && (
+        <section className="card mt-6 animate-fade-up p-5 sm:p-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <span className="section-tag">Site traffic</span>
+              <h2 className="mt-2 text-lg font-semibold text-ink-950">Who's visiting the website</h2>
+            </div>
+            <Link href="/admin/activity" className="inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700">
+              Activity log <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
+
+          <div className="mt-6 grid gap-8 md:grid-cols-[1.6fr_1fr_1fr]">
+            <div>
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="text-sm font-medium text-slate-700">Visits per day</p>
+                <p className="text-xs text-slate-400">
+                  {traffic.week} this week · {traffic.uniqueIps} unique visitors
+                </p>
+              </div>
+              <div className="mt-3 flex h-32 items-end gap-1.5">
+                {traffic.days.map((d) => {
+                  const max = Math.max(...traffic.days.map((x) => x.count));
+                  return (
+                    <div
+                      key={d.date}
+                      className="flex-1 rounded-t-md bg-brand-500/80 transition hover:bg-brand-600"
+                      style={{ height: `${Math.max((d.count / max) * 100, 3)}%` }}
+                      title={`${shortDate(d.date)} — ${d.count} visit${d.count === 1 ? '' : 's'}`}
+                    />
+                  );
+                })}
+              </div>
+              <div className="mt-1.5 flex justify-between text-[10px] text-slate-400">
+                <span>{shortDate(traffic.days[0].date)}</span>
+                <span>{shortDate(traffic.days[7].date)}</span>
+                <span>Today</span>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-slate-700">Top pages</p>
+              <ul className="mt-3 space-y-2.5">
+                {traffic.topPages.map((p) => (
+                  <li key={p.path}>
+                    <div className="flex items-baseline justify-between gap-2 text-xs">
+                      <span className="truncate font-medium text-slate-700">{p.path}</span>
+                      <span className="shrink-0 text-slate-400">{p.count}</span>
+                    </div>
+                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-full rounded-full bg-brand-500/70"
+                        style={{ width: `${(p.count / traffic.topPages[0].count) * 100}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-slate-700">Devices</p>
+              <div className="mt-3 flex h-2.5 overflow-hidden rounded-full bg-slate-100">
+                {DEVICE_ORDER.map((label) => {
+                  const d = traffic.devices.find((x) => x.label === label);
+                  return d ? (
+                    <div
+                      key={label}
+                      className={clsx('h-full', DEVICE_COLORS[label])}
+                      style={{ width: `${(d.count / traffic.total) * 100}%` }}
+                      title={`${label}: ${d.count}`}
+                    />
+                  ) : null;
+                })}
+              </div>
+              <ul className="mt-3 space-y-1.5">
+                {DEVICE_ORDER.map((label) => {
+                  const d = traffic.devices.find((x) => x.label === label);
+                  return (
+                    <li key={label} className="flex items-center gap-2 text-xs text-slate-600">
+                      <span className={clsx('size-2 rounded-full', DEVICE_COLORS[label])} />
+                      {label}
+                      <span className="ml-auto font-medium text-ink-950">{d?.count ?? 0}</span>
+                      <span className="w-10 text-right text-slate-400">
+                        {d ? `${Math.round((d.count / traffic.total) * 100)}%` : '0%'}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="card mt-6 p-5 sm:p-6">
         <div className="flex flex-wrap items-end justify-between gap-3">

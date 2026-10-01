@@ -28,6 +28,7 @@ import type {
   SearchResults,
   SiteVisit,
   UserRole,
+  VisitStats,
 } from './types';
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api').replace(/\/$/, '');
@@ -148,6 +149,7 @@ export const adminApi = {
     authed<{ changed: boolean }>('/auth/change-password', { method: 'POST', body: data }),
   activity: () => authed<ActivityLog[]>('/activity'),
   visits: () => authed<SiteVisit[]>('/activity/visits'),
+  visitStats: () => authed<VisitStats>('/activity/visit-stats'),
 
   jobs: (params: { search?: string; status?: string; employmentType?: string } = {}) =>
     authed<Job[]>(`/jobs/admin${toQuery(params)}`),
