@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { PageHero } from '@/components/site/PageHero';
+import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
 import { projectSlug } from '@/lib/format';
 
@@ -30,12 +31,12 @@ export default async function ProjectsPage() {
             </p>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((p) => (
-                <Link
-                  key={p._id}
-                  href={`/projects/${projectSlug(p)}`}
-                  className="card group overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
-                >
+              {projects.map((p, i) => (
+                <Reveal key={p._id} delay={Math.min(i * 60, 360)} className="h-full">
+                  <Link
+                    href={`/projects/${projectSlug(p)}`}
+                    className="card group flex h-full flex-col overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
                   {p.imageUrl && (
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
                       <Image
@@ -59,7 +60,8 @@ export default async function ProjectsPage() {
                       View project <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
                     </span>
                   </div>
-                </Link>
+                  </Link>
+                </Reveal>
               ))}
             </div>
           )}

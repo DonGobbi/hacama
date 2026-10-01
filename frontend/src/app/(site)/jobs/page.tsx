@@ -2,6 +2,7 @@ import { Search } from 'lucide-react';
 import type { Metadata } from 'next';
 import { JobCard } from '@/components/jobs/JobCard';
 import { PageHero } from '@/components/site/PageHero';
+import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
 import { titleCase } from '@/lib/format';
 import { EMPLOYMENT_TYPES } from '@/lib/types';
@@ -58,8 +59,10 @@ export default async function JobsPage({ searchParams }: Props) {
 
           {jobs.length > 0 ? (
             <div className="mt-4 grid gap-5 md:grid-cols-2">
-              {jobs.map((job) => (
-                <JobCard key={job._id} job={job} />
+              {jobs.map((job, i) => (
+                <Reveal key={job._id} delay={Math.min(i * 60, 360)} className="h-full">
+                  <JobCard job={job} />
+                </Reveal>
               ))}
             </div>
           ) : (

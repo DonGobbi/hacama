@@ -2,6 +2,7 @@ import { CalendarClock, FileDown, ScrollText } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHero } from '@/components/site/PageHero';
+import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
 import { deadlineState, formatDate } from '@/lib/format';
 
@@ -41,10 +42,11 @@ export default async function TendersPage() {
 
           {open.length > 0 && (
             <div className="space-y-5">
-              {open.map((t) => {
+              {open.map((t, i) => {
                 const closingSoon = deadlineState(t.deadline) === 'closing-soon';
                 return (
-                  <article key={t._id} className="card p-6 sm:p-7">
+                  <Reveal key={t._id} delay={Math.min(i * 70, 350)}>
+                    <article className="card p-6 sm:p-7">
                     <div className="flex flex-wrap items-center gap-2.5">
                       {t.reference && <span className="section-tag">{t.reference}</span>}
                       <span className="badge border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
@@ -74,7 +76,8 @@ export default async function TendersPage() {
                         <FileDown className="size-4" /> Download tender document
                       </a>
                     )}
-                  </article>
+                    </article>
+                  </Reveal>
                 );
               })}
             </div>
@@ -84,8 +87,12 @@ export default async function TendersPage() {
             <div className="mt-12">
               <h2 className="text-sm font-semibold tracking-wide text-slate-400 uppercase">Closed tenders</h2>
               <ul className="mt-4 divide-y divide-slate-200 border-t border-b border-slate-200">
-                {closed.map((t) => (
-                  <li key={t._id} className="flex items-center justify-between gap-4 py-3">
+                {closed.map((t, i) => (
+                  <li
+                    key={t._id}
+                    className="flex animate-fade-up items-center justify-between gap-4 py-3"
+                    style={{ animationDelay: `${Math.min(i * 40, 300)}ms` }}
+                  >
                     <span className="text-sm text-slate-600">
                       {t.reference ? `${t.reference}: ` : ''}
                       {t.title}
