@@ -1,6 +1,7 @@
-import { Search } from 'lucide-react';
+import { Briefcase, Search } from 'lucide-react';
 import type { Metadata } from 'next';
 import { JobCard } from '@/components/jobs/JobCard';
+import { EmptyState } from '@/components/site/EmptyState';
 import { PageHero } from '@/components/site/PageHero';
 import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
@@ -66,9 +67,9 @@ export default async function JobsPage({ searchParams }: Props) {
               ))}
             </div>
           ) : (
-            <p className="mt-4 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-              No jobs match your search right now.
-            </p>
+            <div className="mt-4">
+              <EmptyState icon={Briefcase} title="No jobs found" text="No jobs match your search right now." />
+            </div>
           )}
         </div>
       </section>

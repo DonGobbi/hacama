@@ -1,10 +1,11 @@
 'use client';
 
-import { Loader2, Trash2 } from 'lucide-react';
+import { Download, Loader2, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
+import { downloadCsv } from '@/lib/csv';
 import { formatDate } from '@/lib/format';
 import type { Subscriber } from '@/lib/types';
 
@@ -55,7 +56,23 @@ export default function AdminSubscribersPage() {
       )}
 
       {items && items.length > 0 && (
-        <div className="card overflow-x-auto">
+        <>
+          <div className="mb-4 flex justify-end">
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() =>
+                downloadCsv(
+                  'subscribers.csv',
+                  ['Email', 'Subscribed'],
+                  items.map((s) => [s.email, formatDate(s.createdAt)]),
+                )
+              }
+            >
+              <Download className="size-3.5" /> Export CSV
+            </button>
+          </div>
+          <div className="card overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-400">
@@ -88,7 +105,8 @@ export default function AdminSubscribersPage() {
           <p className="border-t border-slate-100 px-4 py-3 text-xs text-slate-400">
             {items.length} {items.length === 1 ? 'subscriber' : 'subscribers'}
           </p>
-        </div>
+          </div>
+        </>
       )}
 
       <ConfirmDialog

@@ -1,7 +1,8 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FolderKanban } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { EmptyState } from '@/components/site/EmptyState';
 import { PageHero } from '@/components/site/PageHero';
 import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
@@ -26,9 +27,11 @@ export default async function ProjectsPage() {
       <section className="py-12">
         <div className="container-page">
           {projects.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-              Projects will appear here as we complete them.
-            </p>
+            <EmptyState
+              icon={FolderKanban}
+              title="No projects yet"
+              text="Projects will appear here as we complete them."
+            />
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {projects.map((p, i) => (

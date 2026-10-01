@@ -1,12 +1,13 @@
 'use client';
 
-import { Calendar, Inbox, Mail, MapPin, MessageCircle, Phone, Tag, Trash2 } from 'lucide-react';
+import { Calendar, Download, Inbox, Mail, MapPin, MessageCircle, Phone, Tag, Trash2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { EmptyState, ErrorNote, LoadingNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { adminApi } from '@/lib/api';
 import { whatsappLink } from '@/lib/company';
+import { downloadCsv } from '@/lib/csv';
 import { formatDate, titleCase } from '@/lib/format';
 import { ENQUIRY_STATUSES, type Enquiry, type EnquiryStatus } from '@/lib/types';
 
@@ -47,6 +48,28 @@ function EnquiriesView() {
     }
   }
 
+  function exportEnquiries() {
+    if (!items?.length) return;
+    downloadCsv(
+      'enquiries.csv',
+      ['Name', 'Organization', 'Email', 'Phone', 'Type', 'Status', 'Category', 'Delivery location', 'Needed by', 'Items', 'Message', 'Submitted'],
+      items.map((e) => [
+        e.name,
+        e.organization,
+        e.email,
+        e.phone,
+        e.type,
+        e.status,
+        e.category,
+        e.deliveryLocation,
+        e.neededBy ? formatDate(e.neededBy) : '',
+        e.items.map((i) => `${i.description}${i.quantity ? ` x${i.quantity}` : ''}`).join('; '),
+        e.message,
+        formatDate(e.createdAt),
+      ]),
+    );
+  }
+
   async function remove(enquiry: Enquiry) {
     setBusy(true);
     try {
@@ -80,6 +103,11 @@ function EnquiriesView() {
             </option>
           ))}
         </select>
+        {items && items.length > 0 && (
+          <button type="button" className="btn btn-outline btn-sm sm:ml-auto" onClick={exportEnquiries}>
+            <Download className="size-3.5" /> Export CSV
+          </button>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
