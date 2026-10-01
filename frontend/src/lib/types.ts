@@ -87,6 +87,15 @@ export interface ActivityLog {
   createdAt: string;
 }
 
+export interface SiteVisit {
+  _id: string;
+  ip: string;
+  device: string;
+  location: string;
+  path: string;
+  createdAt: string;
+}
+
 export interface LoginResponse {
   accessToken: string;
   user: AuthUser;

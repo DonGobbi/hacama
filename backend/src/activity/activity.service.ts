@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { JwtUser } from '../auth/current-user.decorator';
 import { UserRole } from '../users/user.schema';
 import { ActivityLog } from './activity.schema';
+import { SiteVisit } from './visit.schema';
 
 interface GeoResponse {
   status: string;
@@ -52,7 +53,10 @@ function isPrivateIp(ip: string): boolean {
 export class ActivityService {
   private readonly logger = new Logger(ActivityService.name);
 
-  constructor(@InjectModel(ActivityLog.name) private readonly logModel: Model<ActivityLog>) {}
+  constructor(
+    @InjectModel(ActivityLog.name) private readonly logModel: Model<ActivityLog>,
+    @InjectModel(SiteVisit.name) private readonly visitModel: Model<SiteVisit>,
+  ) {}
 
   /** Record a login event, then resolve its geo location in the background. */
   async logLogin(user: JwtUser & { name?: string }, ip: string, userAgent: string) {
@@ -66,13 +70,35 @@ export class ActivityService {
       device: parseDevice(userAgent),
       location: '',
     });
-    void this.resolveLocation(entry.id, ip);
+    void this.resolveLocation(this.logModel, entry.id, ip);
     return entry;
   }
 
-  private async resolveLocation(id: string, ip: string) {
+  /**
+   * Record a public website visit, deduplicated per IP within a 30 minute
+   * window so refreshes don't flood the log.
+   */
+  async logVisit(ip: string, userAgent: string, path: string) {
+    const windowStart = new Date(Date.now() - 30 * 60 * 1000);
+    const recent = await this.visitModel
+      .findOne({ ip, createdAt: { $gt: windowStart } })
+      .select('_id')
+      .lean();
+    if (recent) return null;
+
+    const entry = await this.visitModel.create({
+      ip,
+      device: parseDevice(userAgent),
+      path: path || '/',
+      location: '',
+    });
+    void this.resolveLocation(this.visitModel, entry.id, ip);
+    return entry;
+  }
+
+  private async resolveLocation(model: Model<{ location?: string }>, id: string, ip: string) {
     if (isPrivateIp(ip)) {
-      await this.logModel.findByIdAndUpdate(id, { location: 'Local network' }).exec();
+      await model.findByIdAndUpdate(id, { location: 'Local network' }).exec();
       return;
     }
     try {
@@ -82,7 +108,7 @@ export class ActivityService {
       const geo = (await res.json()) as GeoResponse;
       const location =
         geo.status === 'success' ? [geo.city, geo.regionName, geo.country].filter(Boolean).join(', ') : '';
-      if (location) await this.logModel.findByIdAndUpdate(id, { location }).exec();
+      if (location) await model.findByIdAndUpdate(id, { location }).exec();
     } catch (err) {
       this.logger.warn(`Geo lookup failed for ${ip}: ${(err as Error).message}`);
     }
@@ -92,5 +118,9 @@ export class ActivityService {
   findFor(user: JwtUser) {
     const filter = user.role === UserRole.SuperAdmin ? {} : { user: user.sub };
     return this.logModel.find(filter).sort({ createdAt: -1 }).limit(200).lean();
+  }
+
+  findVisits() {
+    return this.visitModel.find().sort({ createdAt: -1 }).limit(200).lean();
   }
 }

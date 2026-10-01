@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { DemandCard } from '@/components/demands/DemandCard';
 import { PageHero } from '@/components/site/PageHero';
+import { Reveal } from '@/components/site/Reveal';
 import { SupplierForm } from '@/components/site/SupplierForm';
 import { publicApi, safely } from '@/lib/api';
 
@@ -27,8 +28,10 @@ export default async function DemandsPage() {
 
           {demands.length > 0 ? (
             <div className="mt-4 grid gap-5 md:grid-cols-2">
-              {demands.map((d) => (
-                <DemandCard key={d._id} demand={d} />
+              {demands.map((d, i) => (
+                <Reveal key={d._id} delay={Math.min(i * 60, 360)} className="h-full">
+                  <DemandCard demand={d} />
+                </Reveal>
               ))}
             </div>
           ) : (

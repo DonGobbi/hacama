@@ -23,6 +23,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { JobCard } from '@/components/jobs/JobCard';
 import { ContactForm } from '@/components/site/ContactForm';
+import { Reveal } from '@/components/site/Reveal';
 import { FeaturedPhotos } from '@/components/site/FeaturedPhotos';
 import { TestimonialCarousel } from '@/components/site/TestimonialCarousel';
 import { publicApi, safely } from '@/lib/api';
@@ -124,7 +125,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden border-b border-slate-200 bg-stone-50 text-ink-950">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,75,56,0.08),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(168,75,56,0.05),transparent_35%)]" />
         <div className="container-page relative grid items-center gap-12 py-20 lg:grid-cols-[1.15fr_1fr] lg:py-28">
-          <div>
+          <div className="animate-fade-up">
             <span className="section-tag">Registered Supplier · Lilongwe, Malawi</span>
             <h1 className="mt-4 text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
               Reliable Supply for Every Need.
@@ -155,7 +156,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="animate-fade-up space-y-4" style={{ animationDelay: '150ms' }}>
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
               <p className="text-xs font-semibold tracking-wider text-brand-600 uppercase">One partner, every need</p>
               <h2 className="mt-3 text-2xl font-semibold">
@@ -185,20 +186,22 @@ export default async function HomePage() {
 
       {settings.stats.length > 0 && (
         <section className="border-b border-slate-200 bg-white" aria-label="Key numbers">
-          <dl className="container-page grid grid-cols-2 gap-8 py-10 md:grid-cols-4">
-            {settings.stats.map((stat) => (
-              <div key={stat.label} className="flex flex-col-reverse text-center">
-                <dt className="mt-1 text-sm text-slate-600">{stat.label}</dt>
-                <dd className="text-3xl font-bold tracking-tight text-brand-600 sm:text-4xl">{stat.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <Reveal>
+            <dl className="container-page grid grid-cols-2 gap-8 py-10 md:grid-cols-4">
+              {settings.stats.map((stat) => (
+                <div key={stat.label} className="flex flex-col-reverse text-center">
+                  <dt className="mt-1 text-sm text-slate-600">{stat.label}</dt>
+                  <dd className="text-3xl font-bold tracking-tight text-brand-600 sm:text-4xl">{stat.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
         </section>
       )}
 
       {partners.length > 0 && (
         <section className="border-b border-slate-200 bg-white py-10" aria-label="Clients and partners">
-          <div className="container-page">
+          <Reveal className="container-page">
             <p className="text-center text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">
               Trusted by organizations across Malawi
             </p>
@@ -229,12 +232,12 @@ export default async function HomePage() {
                 );
               })}
             </ul>
-          </div>
+          </Reveal>
         </section>
       )}
 
       <section id="about" className="scroll-mt-20 bg-slate-50 py-20">
-        <div className="container-page grid gap-10 lg:grid-cols-2">
+        <Reveal className="container-page grid gap-10 lg:grid-cols-2">
           <div>
             <span className="section-tag">About Hacama Investments</span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">
@@ -292,7 +295,7 @@ export default async function HomePage() {
               wide range of procurement needs.
             </p>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section id="services" className="scroll-mt-20 py-20">
@@ -304,8 +307,9 @@ export default async function HomePage() {
             </h2>
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((s) => (
-              <article key={s.title} className="card flex flex-col p-6">
+            {SERVICES.map((s, i) => (
+              <Reveal key={s.title} delay={Math.min(i * 70, 350)} className="h-full">
+                <article className="card flex h-full flex-col p-6">
                 <div className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600">
                   <s.icon className="size-5" />
                 </div>
@@ -317,7 +321,8 @@ export default async function HomePage() {
                 >
                   Request a quote <ArrowRight className="size-3.5" />
                 </Link>
-              </article>
+                </article>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -336,11 +341,13 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {SECTORS.map((s) => (
-              <article key={s.title} className="rounded-2xl bg-white p-6 shadow-sm">
-                <h3 className="font-semibold text-ink-950">{s.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{s.text}</p>
-              </article>
+            {SECTORS.map((s, i) => (
+              <Reveal key={s.title} delay={Math.min(i * 70, 350)} className="h-full">
+                <article className="h-full rounded-2xl bg-white p-6 shadow-sm">
+                  <h3 className="font-semibold text-ink-950">{s.title}</h3>
+                  <p className="mt-2 text-sm text-slate-600">{s.text}</p>
+                </article>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -359,9 +366,10 @@ export default async function HomePage() {
               Request a Quote <ArrowRight className="size-4" />
             </Link>
           </div>
-          <ol className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {HOW_WE_WORK.map((step, i) => (
-              <li key={step.title} className="card p-6">
+          <Reveal>
+            <ol className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {HOW_WE_WORK.map((step, i) => (
+                <li key={step.title} className="card p-6">
                 <div className="flex items-center justify-between">
                   <span className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600">
                     <step.icon className="size-5" />
@@ -370,9 +378,10 @@ export default async function HomePage() {
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-ink-950">{step.title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{step.text}</p>
-              </li>
-            ))}
-          </ol>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
         </div>
       </section>
 
@@ -384,12 +393,12 @@ export default async function HomePage() {
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">Work we have delivered.</h2>
             </div>
             <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project) => (
-                <Link
-                  key={project._id}
-                  href={`/projects/${projectSlug(project)}`}
-                  className="card group overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
-                >
+              {projects.map((project, i) => (
+                <Reveal key={project._id} delay={Math.min(i * 70, 350)} className="h-full">
+                  <Link
+                    href={`/projects/${projectSlug(project)}`}
+                    className="card group flex h-full flex-col overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
                   {project.imageUrl && (
                     <Image
                       src={project.imageUrl}
@@ -412,7 +421,8 @@ export default async function HomePage() {
                       View project <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
                     </span>
                   </div>
-                </Link>
+                  </Link>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -449,8 +459,10 @@ export default async function HomePage() {
           </div>
           {jobs.length > 0 ? (
             <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {jobs.slice(0, 3).map((job) => (
-                <JobCard key={job._id} job={job} />
+              {jobs.slice(0, 3).map((job, i) => (
+                <Reveal key={job._id} delay={Math.min(i * 70, 350)} className="h-full">
+                  <JobCard job={job} />
+                </Reveal>
               ))}
             </div>
           ) : (
@@ -480,7 +492,7 @@ export default async function HomePage() {
 
       {settings.faqs.length > 0 && (
         <section id="faq" className="scroll-mt-20 py-20">
-          <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.5fr]">
+          <Reveal className="container-page grid gap-10 lg:grid-cols-[1fr_1.5fr]">
             <div>
               <span className="section-tag">FAQ</span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">Frequently asked questions.</h2>
@@ -503,12 +515,12 @@ export default async function HomePage() {
                 </details>
               ))}
             </div>
-          </div>
+          </Reveal>
         </section>
       )}
 
       <section id="contact" className="scroll-mt-20 bg-slate-50 py-20">
-        <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.3fr]">
+        <Reveal className="container-page grid gap-10 lg:grid-cols-[1fr_1.3fr]">
           <div>
             <span className="section-tag">Contact</span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink-950">Open the door to your next conversation.</h2>
@@ -567,7 +579,7 @@ export default async function HomePage() {
             )}
           </div>
           <ContactForm />
-        </div>
+        </Reveal>
       </section>
     </>
   );

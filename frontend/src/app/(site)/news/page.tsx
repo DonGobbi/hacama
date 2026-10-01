@@ -2,6 +2,7 @@ import { CalendarDays } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { PageHero } from '@/components/site/PageHero';
+import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 
@@ -26,8 +27,9 @@ export default async function NewsPage() {
             </p>
           ) : (
             <div className="space-y-6">
-              {articles.map((article) => (
-                <article key={article._id} className="card overflow-hidden">
+              {articles.map((article, i) => (
+                <Reveal key={article._id} delay={Math.min(i * 70, 350)}>
+                  <article className="card overflow-hidden">
                   {article.imageUrl && (
                     <div className="relative aspect-[21/9] w-full">
                       <Image src={article.imageUrl} alt="" fill sizes="(max-width: 896px) 100vw, 896px" className="object-cover" />
@@ -48,7 +50,8 @@ export default async function NewsPage() {
                       <div className="mt-4 whitespace-pre-line leading-relaxed text-slate-600">{article.body}</div>
                     )}
                   </div>
-                </article>
+                  </article>
+                </Reveal>
               ))}
             </div>
           )}

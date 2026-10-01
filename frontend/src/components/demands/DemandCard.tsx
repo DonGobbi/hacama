@@ -7,7 +7,7 @@ export function DemandCard({ demand }: { demand: Demand }) {
   return (
     <Link
       href={`/demands/${demand.slug}`}
-      className="card group flex flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-brand-500/50 hover:shadow-md"
+      className="card group flex h-full flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-brand-500/50 hover:shadow-md"
     >
       <div className="flex items-start justify-between gap-3">
         <div>

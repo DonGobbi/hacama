@@ -89,7 +89,8 @@ export function GalleryGrid({ photos, categories }: { photos: Photo[]; categorie
               key={photo._id}
               type="button"
               onClick={() => setActive(i)}
-              className="group relative mb-4 block w-full overflow-hidden rounded-2xl break-inside-avoid"
+              style={{ animationDelay: `${Math.min(i * 50, 400)}ms` }}
+              className="group relative mb-4 block w-full animate-fade-up overflow-hidden rounded-2xl break-inside-avoid"
             >
               <Image
                 src={photo.url}

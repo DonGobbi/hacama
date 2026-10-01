@@ -26,6 +26,7 @@ import type {
   Testimonial,
   TestimonialInput,
   SearchResults,
+  SiteVisit,
   UserRole,
 } from './types';
 
@@ -146,6 +147,7 @@ export const adminApi = {
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
     authed<{ changed: boolean }>('/auth/change-password', { method: 'POST', body: data }),
   activity: () => authed<ActivityLog[]>('/activity'),
+  visits: () => authed<SiteVisit[]>('/activity/visits'),
 
   jobs: (params: { search?: string; status?: string; employmentType?: string } = {}) =>
     authed<Job[]>(`/jobs/admin${toQuery(params)}`),
