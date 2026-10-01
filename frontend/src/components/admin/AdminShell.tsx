@@ -31,6 +31,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Brand } from '@/components/site/Brand';
+import { adminApi } from '@/lib/api';
 import { useAuth } from './AuthProvider';
 
 type NavItem = { href: string; label: string; icon: LucideIcon; superadminOnly?: boolean };
@@ -156,12 +157,41 @@ function AccountMenu() {
   );
 }
 
+const BADGE_SOURCES: { href: string; fetch: () => Promise<unknown[]> }[] = [
+  { href: '/admin/enquiries', fetch: () => adminApi.enquiries({ status: 'new' }) },
+  { href: '/admin/applications', fetch: () => adminApi.applications({ status: 'new' }) },
+];
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [badges, setBadges] = useState<Record<string, number>>({});
 
   useEffect(() => setOpen(false), [pathname]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function refresh() {
+      const next: Record<string, number> = {};
+      await Promise.all(
+        BADGE_SOURCES.map(async ({ href, fetch }) => {
+          try {
+            next[href] = (await fetch()).length;
+          } catch {
+            // badge stays hidden on error
+          }
+        }),
+      );
+      if (!cancelled) setBadges(next);
+    }
+    refresh();
+    const timer = setInterval(refresh, 60000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, []);
 
   const visibleItems = (items: NavItem[]) =>
     items.filter((item) => !item.superadminOnly || user.role === 'superadmin');
@@ -193,20 +223,28 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 </p>
               )}
               <div className="space-y-0.5">
-                {items.map(({ href, label, icon: Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={clsx(
-                      'flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition active:scale-[0.98]',
-                      isActive(href)
-                        ? 'bg-brand-50 font-semibold text-brand-700'
-                        : 'font-medium text-slate-500 hover:bg-slate-100 hover:text-ink-950',
-                    )}
-                  >
-                    <Icon className="size-4" /> {label}
-                  </Link>
-                ))}
+                {items.map(({ href, label, icon: Icon }) => {
+                  const badge = badges[href] ?? 0;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={clsx(
+                        'flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition active:scale-[0.98]',
+                        isActive(href)
+                          ? 'bg-brand-50 font-semibold text-brand-700'
+                          : 'font-medium text-slate-500 hover:bg-slate-100 hover:text-ink-950',
+                      )}
+                    >
+                      <Icon className="size-4" /> {label}
+                      {badge > 0 && (
+                        <span className="ml-auto min-w-5 rounded-full bg-brand-600 px-1.5 py-0.5 text-center text-[11px] font-bold leading-none text-white">
+                          {badge > 99 ? '99+' : badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           );

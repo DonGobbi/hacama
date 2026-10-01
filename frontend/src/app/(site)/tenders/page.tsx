@@ -1,6 +1,7 @@
 import { CalendarClock, FileDown, ScrollText } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ShareButtons } from '@/components/jobs/ShareButtons';
 import { EmptyState } from '@/components/site/EmptyState';
 import { PageHero } from '@/components/site/PageHero';
 import { Reveal } from '@/components/site/Reveal';
@@ -42,7 +43,7 @@ export default async function TendersPage() {
                 const closingSoon = deadlineState(t.deadline) === 'closing-soon';
                 return (
                   <Reveal key={t._id} delay={Math.min(i * 70, 350)}>
-                    <article className="card p-6 sm:p-7">
+                    <article id={`tender-${t._id}`} className="card scroll-mt-24 p-6 sm:p-7">
                     <div className="flex flex-wrap items-center gap-2.5">
                       {t.reference && <span className="section-tag">{t.reference}</span>}
                       <span className="badge border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
@@ -67,11 +68,14 @@ export default async function TendersPage() {
                     {t.description && (
                       <p className="mt-3 text-sm leading-relaxed whitespace-pre-line text-slate-600">{t.description}</p>
                     )}
-                    {t.documentUrl && (
-                      <a href={t.documentUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm mt-5">
-                        <FileDown className="size-4" /> Download tender document
-                      </a>
-                    )}
+                    <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+                      {t.documentUrl && (
+                        <a href={t.documentUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
+                          <FileDown className="size-4" /> Download tender document
+                        </a>
+                      )}
+                      <ShareButtons title={t.title} url={`/tenders#tender-${t._id}`} />
+                    </div>
                     </article>
                   </Reveal>
                 );

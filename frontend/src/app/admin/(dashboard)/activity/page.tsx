@@ -23,6 +23,7 @@ export default function ActivityPage() {
   const [logs, setLogs] = useState<ActivityLog[] | null>(null);
   const [visits, setVisits] = useState<SiteVisit[] | null>(null);
   const [error, setError] = useState('');
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     adminApi
@@ -36,6 +37,17 @@ export default function ActivityPage() {
   }, []);
 
   const loading = tab === 'signins' ? logs === null : visits === null;
+  const q = query.trim().toLowerCase();
+  const filteredVisits =
+    visits?.filter(
+      (v) =>
+        !q ||
+        [v.device, v.location, v.ip, v.path]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase()
+          .includes(q),
+    ) ?? null;
 
   function exportVisits() {
     if (!visits?.length) return;
@@ -80,8 +92,14 @@ export default function ActivityPage() {
       </div>
 
       {tab === 'visitors' && visits && visits.length > 0 && (
-        <div className="mb-4 flex justify-end">
-          <button type="button" className="btn btn-outline btn-sm" onClick={exportVisits}>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <input
+            className="input sm:max-w-xs"
+            placeholder="Search location, IP, page, device..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <button type="button" className="btn btn-outline btn-sm sm:ml-auto" onClick={exportVisits}>
             <Download className="size-3.5" /> Export CSV
           </button>
         </div>
@@ -142,10 +160,14 @@ export default function ActivityPage() {
         <p className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
           No visits recorded yet.
         </p>
+      ) : filteredVisits?.length === 0 ? (
+        <p className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+          No visits match "{query.trim()}".
+        </p>
       ) : (
         <div className="card overflow-hidden">
           <ul className="divide-y divide-slate-100">
-            {visits.slice(0, MAX_ROWS).map((visit, i) => (
+            {filteredVisits?.slice(0, MAX_ROWS).map((visit, i) => (
               <li
                 key={visit._id}
                 className="flex animate-fade-up flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4"

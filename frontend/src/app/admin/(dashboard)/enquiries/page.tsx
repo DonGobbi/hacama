@@ -22,6 +22,7 @@ function EnquiriesView() {
   const [error, setError] = useState('');
   const [pending, setPending] = useState<Enquiry | null>(null);
   const [busy, setBusy] = useState(false);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     setItems(null);
@@ -84,12 +85,29 @@ function EnquiriesView() {
     }
   }
 
+  const q = query.trim().toLowerCase();
+  const filtered =
+    items?.filter((e) =>
+      !q ||
+      [e.name, e.organization, e.email, e.phone, e.message, e.category, e.deliveryLocation]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(q),
+    ) ?? null;
+
   return (
     <>
       <PageHeader title="Enquiries" description="Contact messages and quote requests submitted on the website." />
       <ErrorNote message={error} />
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
+        <input
+          className="input sm:max-w-xs"
+          placeholder="Search name, email, phone, company..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
         <select className="input sm:w-48" value={type} onChange={(e) => setFilter('type', e.target.value)}>
           <option value="">All types</option>
           <option value="quote">Quote requests</option>
@@ -116,7 +134,10 @@ function EnquiriesView() {
           {items?.length === 0 && (
             <EmptyState icon={Inbox} message="No enquiries found." hint="Contact and quote requests submitted on the website appear here." />
           )}
-          {items?.map((e, i) => (
+          {items !== null && items.length > 0 && filtered?.length === 0 && (
+            <EmptyState icon={Inbox} message={`No enquiries match "${query.trim()}".`} />
+          )}
+          {filtered?.map((e, i) => (
             <button
               key={e._id}
               type="button"
