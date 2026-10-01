@@ -6,7 +6,7 @@ RUN npm ci
 COPY . .
 # NEXT_PUBLIC_* is inlined by `next build` — set it here, not at runtime.
 ARG NEXT_PUBLIC_API_URL=https://hacama-api-370098605562.africa-south1.run.app/api
-ARG NEXT_PUBLIC_GA_ID
+ARG NEXT_PUBLIC_GA_ID=G-C1CE2VMV9V
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 RUN npm run build
