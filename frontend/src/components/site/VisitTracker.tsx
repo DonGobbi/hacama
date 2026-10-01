@@ -5,8 +5,12 @@ import { API_URL } from '@/lib/api';
 
 export function VisitTracker() {
   useEffect(() => {
-    if (sessionStorage.getItem('hacama-visit')) return;
-    sessionStorage.setItem('hacama-visit', '1');
+    try {
+      if (sessionStorage.getItem('hacama-visit')) return;
+      sessionStorage.setItem('hacama-visit', '1');
+    } catch {
+      // Storage unavailable (e.g. private mode) — still record the visit.
+    }
     fetch(`${API_URL}/activity/visit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
