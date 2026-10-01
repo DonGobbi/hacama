@@ -25,29 +25,57 @@ import {
   Wheat,
   X,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Brand } from '@/components/site/Brand';
 import { useAuth } from './AuthProvider';
 
-const NAV = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/enquiries', label: 'Enquiries', icon: Inbox },
-  { href: '/admin/jobs', label: 'Jobs', icon: Briefcase },
-  { href: '/admin/applications', label: 'Applications', icon: FileText },
-  { href: '/admin/photos', label: 'Photos', icon: Images },
-  { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
-  { href: '/admin/news', label: 'News', icon: Newspaper },
-  { href: '/admin/demands', label: 'Demands', icon: Wheat },
-  { href: '/admin/tenders', label: 'Tenders', icon: ScrollText },
-  { href: '/admin/testimonials', label: 'Testimonials', icon: Quote },
-  { href: '/admin/subscribers', label: 'Subscribers', icon: MailPlus },
-  { href: '/admin/suppliers', label: 'Suppliers', icon: Factory },
-  { href: '/admin/partners', label: 'Partners', icon: Handshake },
-  { href: '/admin/settings', label: 'Site settings', icon: Settings },
-  { href: '/admin/activity', label: 'Activity logs', icon: Activity },
-  { href: '/admin/users', label: 'Users', icon: Users, superadminOnly: true },
+type NavItem = { href: string; label: string; icon: LucideIcon; superadminOnly?: boolean };
+
+const NAV_SECTIONS: { title?: string; items: NavItem[] }[] = [
+  { items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard }] },
+  {
+    title: 'Engagement',
+    items: [
+      { href: '/admin/enquiries', label: 'Enquiries', icon: Inbox },
+      { href: '/admin/subscribers', label: 'Subscribers', icon: MailPlus },
+    ],
+  },
+  {
+    title: 'Careers',
+    items: [
+      { href: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+      { href: '/admin/applications', label: 'Applications', icon: FileText },
+    ],
+  },
+  {
+    title: 'Sourcing',
+    items: [
+      { href: '/admin/tenders', label: 'Tenders', icon: ScrollText },
+      { href: '/admin/demands', label: 'Demands', icon: Wheat },
+      { href: '/admin/suppliers', label: 'Suppliers', icon: Factory },
+    ],
+  },
+  {
+    title: 'Website',
+    items: [
+      { href: '/admin/photos', label: 'Photos', icon: Images },
+      { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
+      { href: '/admin/news', label: 'News', icon: Newspaper },
+      { href: '/admin/testimonials', label: 'Testimonials', icon: Quote },
+      { href: '/admin/partners', label: 'Partners', icon: Handshake },
+    ],
+  },
+  {
+    title: 'System',
+    items: [
+      { href: '/admin/settings', label: 'Site settings', icon: Settings },
+      { href: '/admin/activity', label: 'Activity logs', icon: Activity },
+      { href: '/admin/users', label: 'Users', icon: Users, superadminOnly: true },
+    ],
+  },
 ];
 
 function initials(name: string) {
@@ -134,8 +162,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => setOpen(false), [pathname]);
 
-  const items = NAV.filter((item) => !item.superadminOnly || user.role === 'superadmin');
+  const visibleItems = (items: NavItem[]) =>
+    items.filter((item) => !item.superadminOnly || user.role === 'superadmin');
   const isActive = (href: string) => (href === '/admin' ? pathname === '/admin' : pathname.startsWith(href));
+  const current = NAV_SECTIONS.flatMap((s) => visibleItems(s.items)).find((item) => isActive(item.href));
 
   const sidebar = (
     <div className="flex h-full flex-col border-r border-slate-200 bg-white px-4 py-6">
@@ -150,19 +180,36 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <X className="size-5" />
         </button>
       </div>
-      <nav className="mt-6 flex-1 space-y-1 overflow-y-auto" aria-label="Admin navigation">
-        {items.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={clsx(
-              'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
-              isActive(href) ? 'bg-brand-50 text-brand-700' : 'text-slate-500 hover:bg-slate-100 hover:text-ink-950',
-            )}
-          >
-            <Icon className="size-4" /> {label}
-          </Link>
-        ))}
+      <nav className="mt-6 flex-1 space-y-5 overflow-y-auto pr-1" aria-label="Admin navigation">
+        {NAV_SECTIONS.map((section) => {
+          const items = visibleItems(section.items);
+          if (!items.length) return null;
+          return (
+            <div key={section.title ?? 'overview'}>
+              {section.title && (
+                <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  {section.title}
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {items.map(({ href, label, icon: Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={clsx(
+                      'flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition',
+                      isActive(href)
+                        ? 'bg-brand-50 font-semibold text-brand-700'
+                        : 'font-medium text-slate-500 hover:bg-slate-100 hover:text-ink-950',
+                    )}
+                  >
+                    <Icon className="size-4" /> {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </nav>
       <div className="space-y-1 border-t border-slate-200 pt-4">
         <Link href="/" target="_blank" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-500 hover:text-ink-950">
@@ -196,7 +243,15 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <div className="lg:hidden">
             <Brand />
           </div>
-          <span className="hidden text-sm font-medium text-slate-400 lg:block">Admin console</span>
+          <span className="hidden items-baseline gap-1.5 text-sm lg:flex">
+            <span className="font-medium text-slate-400">Admin console</span>
+            {current && current.href !== '/admin' && (
+              <>
+                <span className="text-slate-300">/</span>
+                <span className="font-semibold text-ink-950">{current.label}</span>
+              </>
+            )}
+          </span>
           <div className="ml-auto">
             <AccountMenu />
           </div>
@@ -222,6 +277,28 @@ export function PageHeader({ title, description, action }: { title: string; desc
 export function ErrorNote({ message }: { message: string }) {
   if (!message) return null;
   return <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{message}</p>;
+}
+
+export function EmptyState({
+  icon: Icon,
+  message,
+  hint,
+}: {
+  icon?: LucideIcon;
+  message: string;
+  hint?: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2 p-10 text-center">
+      {Icon && <Icon className="size-8 text-slate-300" />}
+      <p className="text-sm text-slate-500">{message}</p>
+      {hint && <p className="text-xs text-slate-400">{hint}</p>}
+    </div>
+  );
+}
+
+export function LoadingNote() {
+  return <p className="p-6 text-sm text-slate-400">Loading...</p>;
 }
 
 export function StatusBadge({ value }: { value: string }) {

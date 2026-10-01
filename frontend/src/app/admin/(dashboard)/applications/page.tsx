@@ -1,9 +1,9 @@
 'use client';
 
-import { Download, Mail, Phone, Trash2 } from 'lucide-react';
+import { Download, FileText, Mail, Phone, Trash2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import { ErrorNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
+import { EmptyState, ErrorNote, LoadingNote, PageHeader, StatusBadge } from '@/components/admin/AdminShell';
 import { adminApi } from '@/lib/api';
 import { formatDate, titleCase } from '@/lib/format';
 import { APPLICATION_STATUSES, type Application, type ApplicationStatus, type Job } from '@/lib/types';
@@ -85,8 +85,10 @@ function ApplicationsView() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="card divide-y divide-slate-100 self-start">
-          {items === null && <p className="p-6 text-sm text-slate-400">Loading...</p>}
-          {items?.length === 0 && <p className="p-6 text-sm text-slate-500">No applications found.</p>}
+          {items === null && <LoadingNote />}
+          {items?.length === 0 && (
+            <EmptyState icon={FileText} message="No applications found." hint="Applications submitted through job posts appear here." />
+          )}
           {items?.map((a) => (
             <button
               key={a._id}
