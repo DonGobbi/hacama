@@ -21,6 +21,7 @@ function ApplicationsView() {
   const [error, setError] = useState('');
   const [pending, setPending] = useState<Application | null>(null);
   const [busy, setBusy] = useState(false);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     adminApi.jobs().then(setJobs).catch(() => {});
@@ -65,12 +66,29 @@ function ApplicationsView() {
     }
   }
 
+  const q = query.trim().toLowerCase();
+  const filtered =
+    items?.filter((a) =>
+      !q ||
+      [a.fullName, a.email, a.phone, a.job?.title]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(q),
+    ) ?? null;
+
   return (
     <>
       <PageHeader title="Applications" description="Review candidates and track hiring progress." />
       <ErrorNote message={error} />
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
+        <input
+          className="input sm:max-w-xs"
+          placeholder="Search name, email, phone, job..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
         <select className="input sm:w-64" value={jobId} onChange={(e) => setFilter('jobId', e.target.value)}>
           <option value="">All jobs</option>
           {jobs.map((j) => (
@@ -95,7 +113,10 @@ function ApplicationsView() {
           {items?.length === 0 && (
             <EmptyState icon={FileText} message="No applications found." hint="Applications submitted through job posts appear here." />
           )}
-          {items?.map((a, i) => (
+          {items !== null && items.length > 0 && filtered?.length === 0 && (
+            <EmptyState icon={FileText} message={`No applications match "${query.trim()}".`} />
+          )}
+          {filtered?.map((a, i) => (
             <button
               key={a._id}
               type="button"

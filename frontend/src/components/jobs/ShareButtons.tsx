@@ -3,10 +3,18 @@
 import { Facebook, Linkedin, MessageCircle, Share2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-export function ShareButtons({ title }: { title: string }) {
+export function ShareButtons({ title, url: urlProp }: { title: string; url?: string }) {
   const [url, setUrl] = useState('');
 
-  useEffect(() => setUrl(window.location.href), []);
+  useEffect(() => {
+    setUrl(
+      urlProp
+        ? urlProp.startsWith('/')
+          ? `${window.location.origin}${urlProp}`
+          : urlProp
+        : window.location.href,
+    );
+  }, [urlProp]);
   if (!url) return null;
 
   const text = encodeURIComponent(`${title} | Hacama Investments`);
