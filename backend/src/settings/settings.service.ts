@@ -36,6 +36,21 @@ const DEFAULTS: Partial<Settings> = {
   ],
 };
 
+// Fields added after a settings document was first stored are absent from that
+// document rather than defaulted, so reads merge in empty values for missing keys.
+const FALLBACKS = {
+  phone: '',
+  whatsapp: '',
+  email: '',
+  address: '',
+  officeHours: '',
+  announcement: '',
+  announcementLink: '',
+  stats: [],
+  credentials: [],
+  faqs: [],
+} satisfies Partial<Settings>;
+
 @Injectable()
 export class SettingsService {
   constructor(
@@ -43,10 +58,11 @@ export class SettingsService {
     private readonly storage: StorageService,
   ) {}
 
-  get() {
-    return this.settingsModel
+  async get() {
+    const doc = await this.settingsModel
       .findOneAndUpdate({}, { $setOnInsert: DEFAULTS }, { upsert: true, new: true, sort: { createdAt: 1 } })
       .lean();
+    return doc ? { ...FALLBACKS, ...doc } : doc;
   }
 
   async update(dto: UpdateSettingsDto) {

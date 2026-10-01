@@ -63,6 +63,24 @@ function RowsEditor<T extends object>({
   );
 }
 
+const EMPTY_SETTINGS: SiteSettings = {
+  phone: '',
+  whatsapp: '',
+  email: '',
+  address: '',
+  officeHours: '',
+  announcement: '',
+  announcementLink: '',
+  stats: [],
+  credentials: [],
+  faqs: [],
+};
+
+// API responses may omit keys added after the stored settings document was created.
+function applySettings(s: SiteSettings): SiteSettings {
+  return { ...EMPTY_SETTINGS, ...s };
+}
+
 function tidy<T extends object>(rows: T[]) {
   return rows
     .map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, String(v ?? '').trim()])) as T)
@@ -80,7 +98,7 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     adminApi
       .settings()
-      .then(setSettings)
+      .then((s) => setSettings(applySettings(s)))
       .catch((err: Error) => setError(err.message));
   }, []);
 
@@ -124,7 +142,7 @@ export default function AdminSettingsPage() {
         credentials,
         faqs,
       });
-      setSettings(saved);
+      setSettings(applySettings(saved));
       setNotice('Settings saved. Changes appear on the website within a minute.');
     } catch (err) {
       setError((err as Error).message);
@@ -141,7 +159,7 @@ export default function AdminSettingsPage() {
     setError('');
     setUploading(true);
     try {
-      setSettings(await adminApi.uploadCompanyProfile(form));
+      setSettings(applySettings(await adminApi.uploadCompanyProfile(form)));
       if (fileRef.current) fileRef.current.value = '';
       setNotice('Company profile uploaded.');
     } catch (err) {
@@ -154,7 +172,7 @@ export default function AdminSettingsPage() {
   async function removeProfile() {
     if (!confirm('Remove the company profile PDF from the website?')) return;
     try {
-      setSettings(await adminApi.removeCompanyProfile());
+      setSettings(applySettings(await adminApi.removeCompanyProfile()));
       setNotice('Company profile removed.');
     } catch (err) {
       setError((err as Error).message);
