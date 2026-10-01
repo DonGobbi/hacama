@@ -48,8 +48,12 @@ export default function ActivityPage() {
       ) : (
         <div className="card overflow-hidden">
           <ul className="divide-y divide-slate-100">
-            {logs.slice(0, 10).map((log) => (
-              <li key={log._id} className="flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4">
+            {logs.slice(0, 10).map((log, i) => (
+              <li
+                key={log._id}
+                className="flex animate-fade-up flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4"
+                style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
+              >
                 <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-700">
                   {log.name
                     .split(' ')

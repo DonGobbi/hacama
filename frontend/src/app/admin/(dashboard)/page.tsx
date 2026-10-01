@@ -205,7 +205,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <section className="relative mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-stone-50 p-6 sm:p-8">
+      <section className="relative mb-6 animate-fade-up overflow-hidden rounded-3xl border border-slate-200 bg-stone-50 p-6 sm:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,75,56,0.10),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(168,75,56,0.06),transparent_40%)]" />
         <div className="relative flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">
@@ -245,7 +245,8 @@ export default function DashboardPage() {
             <Link
               key={stat.label}
               href={stat.href}
-              className="card group p-5 transition hover:-translate-y-0.5 hover:border-brand-500/40 hover:shadow-md"
+              className="card group animate-fade-up p-5 transition hover:-translate-y-0.5 hover:border-brand-500/40 hover:shadow-md"
+              style={{ animationDelay: `${i * 60}ms` }}
             >
               <div className="flex items-center justify-between">
                 <span className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600">

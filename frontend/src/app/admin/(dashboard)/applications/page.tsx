@@ -89,12 +89,13 @@ function ApplicationsView() {
           {items?.length === 0 && (
             <EmptyState icon={FileText} message="No applications found." hint="Applications submitted through job posts appear here." />
           )}
-          {items?.map((a) => (
+          {items?.map((a, i) => (
             <button
               key={a._id}
               type="button"
               onClick={() => setSelected(a)}
-              className={`flex w-full flex-wrap items-center justify-between gap-2 px-5 py-3 text-left text-sm hover:bg-slate-50 ${selected?._id === a._id ? 'bg-brand-50' : ''}`}
+              style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
+              className={`flex w-full animate-fade-up flex-wrap items-center justify-between gap-2 px-5 py-3 text-left text-sm hover:bg-slate-50 ${selected?._id === a._id ? 'bg-brand-50' : ''}`}
             >
               <div>
                 <p className="font-medium text-ink-950">{a.fullName}</p>

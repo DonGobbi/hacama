@@ -13,6 +13,7 @@ import {
   Images,
   Inbox,
   LayoutDashboard,
+  Loader2,
   LogOut,
   MailPlus,
   Menu,
@@ -120,7 +121,7 @@ function AccountMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-2 w-64 origin-top-right animate-pop overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
           <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3.5">
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-600 text-sm font-bold text-white">
               {initials(user.name)}
@@ -197,7 +198,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                     key={href}
                     href={href}
                     className={clsx(
-                      'flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition',
+                      'flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition active:scale-[0.98]',
                       isActive(href)
                         ? 'bg-brand-50 font-semibold text-brand-700'
                         : 'font-medium text-slate-500 hover:bg-slate-100 hover:text-ink-950',
@@ -225,8 +226,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-64">{sidebar}</aside>
+          <div className="absolute inset-0 animate-fade-in bg-black/50" onClick={() => setOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-64 animate-slide-in-left">{sidebar}</aside>
         </div>
       )}
 
@@ -248,7 +249,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             {current && current.href !== '/admin' && (
               <>
                 <span className="text-slate-300">/</span>
-                <span className="font-semibold text-ink-950">{current.label}</span>
+                <span key={current.href} className="animate-fade-in font-semibold text-ink-950">
+                  {current.label}
+                </span>
               </>
             )}
           </span>
@@ -256,7 +259,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <AccountMenu />
           </div>
         </header>
-        <main className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">{children}</main>
+        <main key={pathname} className="mx-auto max-w-6xl animate-fade-up p-4 sm:p-6 lg:p-8">
+          {children}
+        </main>
       </div>
     </div>
   );
@@ -289,7 +294,7 @@ export function EmptyState({
   hint?: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 p-10 text-center">
+    <div className="flex animate-fade-up flex-col items-center gap-2 p-10 text-center">
       {Icon && <Icon className="size-8 text-slate-300" />}
       <p className="text-sm text-slate-500">{message}</p>
       {hint && <p className="text-xs text-slate-400">{hint}</p>}
@@ -298,7 +303,11 @@ export function EmptyState({
 }
 
 export function LoadingNote() {
-  return <p className="p-6 text-sm text-slate-400">Loading...</p>;
+  return (
+    <p className="flex items-center gap-2 p-6 text-sm text-slate-400">
+      <Loader2 className="size-4 animate-spin" /> Loading...
+    </p>
+  );
 }
 
 export function StatusBadge({ value }: { value: string }) {
