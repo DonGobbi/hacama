@@ -1,11 +1,12 @@
 'use client';
 
 import clsx from 'clsx';
-import { Globe, Loader2, MonitorSmartphone, Route, ShieldCheck } from 'lucide-react';
+import { Download, Globe, Loader2, MonitorSmartphone, Route, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ErrorNote, PageHeader } from '@/components/admin/AdminShell';
 import { useAuth } from '@/components/admin/AuthProvider';
 import { adminApi } from '@/lib/api';
+import { downloadCsv } from '@/lib/csv';
 import { formatDate } from '@/lib/format';
 import type { ActivityLog, SiteVisit } from '@/lib/types';
 
@@ -35,6 +36,15 @@ export default function ActivityPage() {
   }, []);
 
   const loading = tab === 'signins' ? logs === null : visits === null;
+
+  function exportVisits() {
+    if (!visits?.length) return;
+    downloadCsv(
+      'site-visitors.csv',
+      ['Time', 'Device', 'Location', 'IP', 'Landing page'],
+      visits.map((v) => [formatTime(v.createdAt), v.device, v.location, v.ip, v.path]),
+    );
+  }
 
   return (
     <div>
@@ -68,6 +78,14 @@ export default function ActivityPage() {
           </button>
         ))}
       </div>
+
+      {tab === 'visitors' && visits && visits.length > 0 && (
+        <div className="mb-4 flex justify-end">
+          <button type="button" className="btn btn-outline btn-sm" onClick={exportVisits}>
+            <Download className="size-3.5" /> Export CSV
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="grid place-items-center py-20">

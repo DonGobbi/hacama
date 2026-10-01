@@ -1,6 +1,7 @@
 import { CalendarClock, FileDown, ScrollText } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { EmptyState } from '@/components/site/EmptyState';
 import { PageHero } from '@/components/site/PageHero';
 import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
@@ -27,17 +28,12 @@ export default async function TendersPage() {
       <section className="py-12">
         <div className="container-page max-w-4xl">
           {tenders.length === 0 && (
-            <div className="card flex flex-col items-center gap-3 p-12 text-center">
-              <ScrollText className="size-10 text-slate-300" />
-              <h2 className="text-lg font-semibold text-ink-950">No tenders right now</h2>
-              <p className="max-w-md text-sm text-slate-600">
-                When we publish a tender or RFQ it will appear here. Register as a supplier to be notified of upcoming
-                opportunities.
-              </p>
-              <Link href="/demands#suppliers" className="btn btn-outline btn-sm mt-2">
-                Register as a supplier
-              </Link>
-            </div>
+            <EmptyState
+              icon={ScrollText}
+              title="No tenders right now"
+              text="When we publish a tender or RFQ it will appear here. Register as a supplier to be notified of upcoming opportunities."
+              action={{ href: '/demands#suppliers', label: 'Register as a supplier' }}
+            />
           )}
 
           {open.length > 0 && (

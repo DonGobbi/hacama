@@ -1,9 +1,10 @@
 'use client';
 
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Images, Search, X } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { EmptyState } from '@/components/site/EmptyState';
 import type { Photo } from '@/lib/types';
 
 export function GalleryGrid({ photos, categories }: { photos: Photo[]; categories: string[] }) {
@@ -79,9 +80,11 @@ export function GalleryGrid({ photos, categories }: { photos: Photo[]; categorie
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-          {query || category ? 'No photos match your search.' : 'No photos to show yet.'}
-        </p>
+        <EmptyState
+          icon={Images}
+          title={query || category ? 'No photos match your search' : 'No photos yet'}
+          text={query || category ? 'Try a different search or category.' : 'Photos from our work will appear here.'}
+        />
       ) : (
         <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
           {visible.map((photo, i) => (
@@ -110,43 +113,56 @@ export function GalleryGrid({ photos, categories }: { photos: Photo[]; categorie
 
       {current && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-label={current.title}
           onClick={close}
         >
-          <button type="button" className="absolute top-4 right-4 rounded-full p-2 text-white hover:bg-white/10" onClick={close} aria-label="Close">
-            <X className="size-6" />
+          <span className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white">
+            {(active ?? 0) + 1} / {visible.length}
+          </span>
+          <button
+            type="button"
+            className="absolute top-4 right-4 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+            onClick={close}
+            aria-label="Close"
+          >
+            <X className="size-5" />
           </button>
           {visible.length > 1 && (
             <>
               <button
                 type="button"
-                className="absolute left-4 rounded-full p-2 text-white hover:bg-white/10"
+                className="absolute left-3 rounded-full bg-white/10 p-2.5 text-white transition hover:bg-white/20 sm:left-6"
                 onClick={(e) => {
                   e.stopPropagation();
                   step(-1);
                 }}
                 aria-label="Previous photo"
               >
-                <ChevronLeft className="size-8" />
+                <ChevronLeft className="size-6" />
               </button>
               <button
                 type="button"
-                className="absolute right-4 rounded-full p-2 text-white hover:bg-white/10"
+                className="absolute right-3 rounded-full bg-white/10 p-2.5 text-white transition hover:bg-white/20 sm:right-6"
                 onClick={(e) => {
                   e.stopPropagation();
                   step(1);
                 }}
                 aria-label="Next photo"
               >
-                <ChevronRight className="size-8" />
+                <ChevronRight className="size-6" />
               </button>
             </>
           )}
           <figure className="max-h-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <img src={current.url} alt={current.title} className="max-h-[80vh] w-auto rounded-xl object-contain" />
+            <img
+              key={current._id}
+              src={current.url}
+              alt={current.title}
+              className="max-h-[80vh] w-auto animate-fade-in rounded-xl object-contain"
+            />
             <figcaption className="mt-3 text-center text-white">
               <p className="font-semibold">{current.title}</p>
               {current.caption && <p className="mt-1 text-sm text-slate-300">{current.caption}</p>}

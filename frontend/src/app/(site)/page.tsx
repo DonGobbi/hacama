@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  CheckCircle2,
   ChevronDown,
   ClipboardList,
   Clock,
@@ -122,19 +123,22 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-slate-200 bg-stone-50 text-ink-950">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,75,56,0.08),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(168,75,56,0.05),transparent_35%)]" />
+      <section className="relative overflow-hidden bg-ink-950 text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(189,90,69,0.35),transparent_45%),radial-gradient(circle_at_85%_85%,rgba(189,90,69,0.22),transparent_40%)]" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.15] [background-image:linear-gradient(rgba(255,255,255,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.4)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container-page relative grid items-center gap-12 py-20 lg:grid-cols-[1.15fr_1fr] lg:py-28">
           <div className="animate-fade-up">
-            <span className="section-tag">Registered Supplier · Lilongwe, Malawi</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-[0.18em] text-brand-100 uppercase">
+              <ShieldCheck className="size-3.5" /> Registered Supplier · Lilongwe, Malawi
+            </span>
             <h1 className="mt-4 text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
-              Reliable Supply for Every Need.
+              Reliable Supply for <span className="text-brand-500">Every Need.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg text-slate-600">
+            <p className="mt-6 max-w-xl text-lg text-slate-300">
               Hacama Investments is a diversified investment, procurement, and supply company providing products and
               services to institutions, businesses, organizations, farmers, and communities across Malawi.
             </p>
-            <p className="mt-4 max-w-xl text-slate-600">
+            <p className="mt-4 max-w-xl text-slate-400">
               From agricultural inputs and produce to office equipment, school furniture, computers, machinery, and
               general supplies, we connect our customers with the products they need through reliable sourcing and
               dependable service.
@@ -143,13 +147,13 @@ export default async function HomePage() {
               <Link href="/#services" className="btn btn-primary">
                 Explore Our Services
               </Link>
-              <Link href="/#contact" className="btn btn-secondary">
+              <Link href="/#contact" className="btn border-white/20 text-white hover:bg-white/10">
                 Contact Us
               </Link>
             </div>
-            <div className="mt-8 flex flex-wrap gap-2 text-xs text-slate-600">
+            <div className="mt-8 flex flex-wrap gap-2 text-xs text-slate-300">
               {['Registered supplier', 'Lilongwe-based', 'Multi-sector supply'].map((t) => (
-                <span key={t} className="rounded-full border border-slate-300 bg-white px-3 py-1">
+                <span key={t} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
                   {t}
                 </span>
               ))}
@@ -157,15 +161,21 @@ export default async function HomePage() {
           </div>
 
           <div className="animate-fade-up space-y-4" style={{ animationDelay: '150ms' }}>
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <p className="text-xs font-semibold tracking-wider text-brand-600 uppercase">One partner, every need</p>
-              <h2 className="mt-3 text-2xl font-semibold">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-8 shadow-2xl backdrop-blur">
+              <p className="text-xs font-semibold tracking-wider text-brand-100 uppercase">One partner, every need</p>
+              <h2 className="mt-3 text-2xl font-semibold text-white">
                 Procurement, supply, and investment under one business.
               </h2>
-              <ul className="mt-5 space-y-3 text-sm text-slate-600">
-                <li>Registered supplier recognized by PPDA</li>
-                <li>Agriculture, education, technology, and general supplies</li>
-                <li>Reliable sourcing and dependable service</li>
+              <ul className="mt-5 space-y-3 text-sm text-slate-300">
+                {[
+                  'Registered supplier recognized by PPDA',
+                  'Agriculture, education, technology, and general supplies',
+                  'Reliable sourcing and dependable service',
+                ].map((t) => (
+                  <li key={t} className="flex items-center gap-2.5">
+                    <CheckCircle2 className="size-4 shrink-0 text-brand-500" /> {t}
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -174,9 +184,9 @@ export default async function HomePage() {
                 ['Registered Supplier', 'Recognized for public procurement and institutional supply'],
                 ['Multi-Sector', 'From farm inputs to office equipment and beyond'],
               ].map(([title, text]) => (
-                <article key={title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <strong className="block text-sm text-ink-950">{title}</strong>
-                  <span className="mt-1 block text-xs text-slate-500">{text}</span>
+                <article key={title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <strong className="block text-sm text-white">{title}</strong>
+                  <span className="mt-1 block text-xs text-slate-400">{text}</span>
                 </article>
               ))}
             </div>

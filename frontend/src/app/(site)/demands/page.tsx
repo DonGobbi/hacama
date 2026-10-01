@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { Handshake } from 'lucide-react';
 import { DemandCard } from '@/components/demands/DemandCard';
+import { EmptyState } from '@/components/site/EmptyState';
 import { PageHero } from '@/components/site/PageHero';
 import { Reveal } from '@/components/site/Reveal';
 import { SupplierForm } from '@/components/site/SupplierForm';
@@ -35,9 +37,14 @@ export default async function DemandsPage() {
               ))}
             </div>
           ) : (
-            <p className="mt-4 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-              No active demands right now. Check back soon or contact us with your offer.
-            </p>
+            <div className="mt-4">
+              <EmptyState
+                icon={Handshake}
+                title="No active demands right now"
+                text="Check back soon, or contact us with your offer."
+                action={{ href: '/#contact', label: 'Contact us' }}
+              />
+            </div>
           )}
         </div>
       </section>

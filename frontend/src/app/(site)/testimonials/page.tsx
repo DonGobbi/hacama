@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Quote } from 'lucide-react';
+import { EmptyState } from '@/components/site/EmptyState';
 import { PageHero } from '@/components/site/PageHero';
 import { SubmitTestimonialForm } from '@/components/site/SubmitTestimonialForm';
 import { publicApi, safely } from '@/lib/api';
@@ -28,9 +29,7 @@ export default async function TestimonialsPage() {
       <section className="py-12">
         <div className="container-page">
           {testimonials.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
-              No testimonials yet.
-            </p>
+            <EmptyState icon={Quote} title="No testimonials yet" text="Customer feedback will appear here." />
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {testimonials.map((t) => (

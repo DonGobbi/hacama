@@ -1,6 +1,7 @@
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, Newspaper } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import { EmptyState } from '@/components/site/EmptyState';
 import { PageHero } from '@/components/site/PageHero';
 import { Reveal } from '@/components/site/Reveal';
 import { publicApi, safely } from '@/lib/api';
@@ -22,9 +23,7 @@ export default async function NewsPage() {
       <section className="py-12">
         <div className="container-page max-w-4xl">
           {articles.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-              No news yet. Check back soon.
-            </p>
+            <EmptyState icon={Newspaper} title="No news yet" text="Check back soon for updates from Hacama Investments." />
           ) : (
             <div className="space-y-6">
               {articles.map((article, i) => (
